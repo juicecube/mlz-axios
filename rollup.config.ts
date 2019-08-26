@@ -10,7 +10,7 @@ const pkg = require('./package.json')
 const libraryName = 'mlz_axios'
 
 export default {
-  input: `src/core/${libraryName}.ts`,
+  input: `src/${libraryName}.ts`,
   output: [
     {
       file: pkg.main,
@@ -24,6 +24,7 @@ export default {
       sourcemap: true
     }
   ],
+  external: ['axios'],
   watch: {
     inclue: 'src/**'
   },

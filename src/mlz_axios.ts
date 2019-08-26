@@ -5,15 +5,15 @@ import axios, {
   AxiosPromise,
   AxiosResponse
 } from 'axios';
-import mergeConfig from './merge_config'
-
+import mergeConfig from './utils/merge_config'
 export default class Http {
-  private base_url?:string;
-  private authorization_type:number|string = '';
-  private readonly authorization:string = 'authorization';
-  private cancel_token:CancelTokenStatic = axios.CancelToken;
-  private source:CancelTokenSource = this.cancel_token.source();
-  private default_config:AxiosRequestConfig = {
+  base_url?:string;
+  authorization_type:number|string = '';
+  readonly authorization_key:string = 'authorization';
+  authorization_val:string | null = this.get_token();
+  cancel_token:CancelTokenStatic = axios.CancelToken;
+  source:CancelTokenSource = this.cancel_token.source();
+  default_config:AxiosRequestConfig = {
     withCredentials: true,
     timeout: 5000,
     validateStatus: function (status) {
@@ -36,10 +36,10 @@ export default class Http {
     if (this.base_url) {
       actual_opt.baseURL = this.base_url
     }
-    if (this.authorization && this.authorization_type) {
+    if (this.authorization_val && this.authorization_type) {
       actual_opt.headers = {
         authorization_type: this.authorization_type,
-        authorization: this.authorization,
+        authorization: this.authorization_val,
         ...actual_opt.headers
       }
     }
@@ -49,7 +49,7 @@ export default class Http {
   public abort() {
     this.source.cancel('API abort.')
   }
-  public get(url:string, configs?:AxiosRequestConfig):AxiosPromise {
+  public get(url:string, configs?:AxiosRequestConfig) {
     return this.request({
       method: 'get',
       url,
@@ -88,10 +88,16 @@ export default class Http {
     })
   }
   public set_default_conf (configs:AxiosRequestConfig = {}) {
-    mergeConfig(axios.defaults, configs)
+    axios.defaults = mergeConfig(axios.defaults, configs)
   }
-  public set_token(authorization_type:number|string) {
+  public set_token_type(authorization_type:number|string) {
     this.authorization_type = authorization_type;
+  }
+  public set_token(token:string) {
+    localStorage.setItem(this.authorization_key, token);
+  }
+  public get_token() {
+    return localStorage.getItem(this.authorization_key)
   }
   public set_req_interceptor (resolve?:Function, reject?:Function) {
     // Add a request interceptor

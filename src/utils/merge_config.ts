@@ -1,8 +1,9 @@
-import { AxiosRequestConfig, AxiosInstance } from "axios";
-import { deepMerge, isPlainObject } from '../utils'
+import { AxiosRequestConfig } from "axios";
+import { deepMerge, isPlainObject } from '.'
 
 const strats = Object.create(null)
 
+// 默认合并策略
 function defaultStrat(val1:any, val2:any): any {
   return typeof val2 !== 'undefined' ? val2 : val1
 }
@@ -20,7 +21,7 @@ function deepMergeStrat(val1:any, val2:any): any {
     return val2
   } else if (isPlainObject(val1)) {
     return deepMerge(val1)
-  } else if (typeof val1 !== 'undefined') {
+  } else {
     return val1
   }
 }
