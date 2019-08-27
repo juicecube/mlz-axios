@@ -7,13 +7,13 @@ import axios, {
 } from 'axios';
 import mergeConfig from './utils/merge_config'
 export default class Http {
-  base_url?:string;
-  authorization_type:number|string = '';
-  readonly authorization_key:string = 'authorization';
-  authorization_val:string | null = this.get_token();
-  cancel_token:CancelTokenStatic = axios.CancelToken;
-  source:CancelTokenSource = this.cancel_token.source();
-  default_config:AxiosRequestConfig = {
+  baseUrl?:string;
+  authorizationType:number|string = '';
+  readonly authorizationKey:string = 'authorization';
+  authorizationVal:string | null = this.getToken();
+  cancelToken:CancelTokenStatic = axios.CancelToken;
+  source:CancelTokenSource = this.cancelToken.source();
+  defaultConfig:AxiosRequestConfig = {
     withCredentials: true,
     timeout: 5000,
     validateStatus: function (status) {
@@ -25,26 +25,26 @@ export default class Http {
       }
     },
   }
-  constructor(base_url?:string) {
-    if (base_url) {
-      this.base_url = base_url
+  constructor(baseUrl?:string) {
+    if (baseUrl) {
+      this.baseUrl = baseUrl
     }
-    this.set_default_conf(this.default_config)
+    this.setDefaultConf(this.defaultConfig)
   }
   private request(opt:AxiosRequestConfig):AxiosPromise {
-    const actual_opt = Object.assign({}, opt);
-    if (this.base_url) {
-      actual_opt.baseURL = this.base_url
+    const actualOpt = Object.assign({}, opt);
+    if (this.baseUrl) {
+      actualOpt.baseURL = this.baseUrl
     }
-    if (this.authorization_val && this.authorization_type) {
-      actual_opt.headers = {
-        authorization_type: this.authorization_type,
-        authorization: this.authorization_val,
-        ...actual_opt.headers
+    if (this.authorizationVal && this.authorizationType) {
+      actualOpt.headers = {
+        authorizationType: this.authorizationType,
+        authorization: this.authorizationVal,
+        ...actualOpt.headers
       }
     }
-    actual_opt.cancelToken = this.source.token;
-    return axios.request(actual_opt)
+    actualOpt.cancelToken = this.source.token;
+    return axios.request(actualOpt)
   }
   public abort() {
     this.source.cancel('API abort.')
@@ -87,19 +87,19 @@ export default class Http {
       ...configs,
     })
   }
-  public set_default_conf (configs:AxiosRequestConfig = {}) {
+  public setDefaultConf (configs:AxiosRequestConfig = {}) {
     axios.defaults = mergeConfig(axios.defaults, configs)
   }
-  public set_token_type(authorization_type:number|string) {
-    this.authorization_type = authorization_type;
+  public setTokenType(authorizationType:number|string) {
+    this.authorizationType = authorizationType;
   }
-  public set_token(token:string) {
-    localStorage.setItem(this.authorization_key, token);
+  public setToken(token:string) {
+    localStorage.setItem(this.authorizationKey, token);
   }
-  public get_token() {
-    return localStorage.getItem(this.authorization_key)
+  public getToken() {
+    return localStorage.getItem(this.authorizationKey)
   }
-  public set_req_interceptor (resolve?:Function, reject?:Function) {
+  public setReqInterceptor (resolve?:Function, reject?:Function) {
     // Add a request interceptor
     axios.interceptors.request.use(function (config: AxiosRequestConfig) {
       // Do something before request is sent
@@ -111,7 +111,7 @@ export default class Http {
       return Promise.reject(error);
     });
   }
-  public set_res_interceptor (resolve?:Function, reject?:Function) {
+  public setResInterceptor (resolve?:Function, reject?:Function) {
     // Add a response interceptor
     axios.interceptors.response.use(function (response:AxiosResponse) {
       // Do something with response data
