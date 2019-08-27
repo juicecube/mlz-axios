@@ -1,7 +1,7 @@
 {
   "name": "mlz-axios",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.0.0",
+  "description": "mlz-axios",
   "main": "dist/ts-axios.umd.js",
   "module": "dist/ts-axios.es5.js",
   "typings": "dist/types/index.d.ts",

@@ -16,12 +16,18 @@ export default {
       file: pkg.main,
       name: camelCase(libraryName),
       format: 'umd',
-      sourcemap: true
+      sourcemap: true,
+      globals: {
+        'axios': 'axios'
+      },
     },
     {
       file: pkg.module,
       format: 'es',
-      sourcemap: true
+      sourcemap: true,
+      globals: {
+        'axios': 'axios'
+      },
     }
   ],
   external: ['axios'],
