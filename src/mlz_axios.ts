@@ -3,14 +3,14 @@ import axios, {
   CancelTokenStatic, 
   CancelTokenSource,
   AxiosPromise,
-  AxiosResponse
+  AxiosResponse,
 } from 'axios';
 import mergeConfig from './utils/merge_config'
+
 export default class Http {
   baseUrl?:string;
-  authorizationType:number|string = '';
-  readonly authorizationKey:string = 'authorization';
-  authorizationVal:string | null = this.getToken();
+  static authorizationType:number|string = '';
+  static readonly tokenKey:string = 'token';
   cancelToken:CancelTokenStatic = axios.CancelToken;
   source:CancelTokenSource = this.cancelToken.source();
   defaultConfig:AxiosRequestConfig = {
@@ -29,17 +29,22 @@ export default class Http {
     if (baseUrl) {
       this.baseUrl = baseUrl
     }
-    this.setDefaultConf(this.defaultConfig)
+    Http.setDefaultConf(this.defaultConfig)
   }
   private request(opt:AxiosRequestConfig):AxiosPromise {
     const actualOpt = Object.assign({}, opt);
+    let tokenObj = null
     if (this.baseUrl) {
       actualOpt.baseURL = this.baseUrl
     }
-    if (this.authorizationVal && this.authorizationType) {
+    try {
+      tokenObj = JSON.parse(localStorage.getItem(Http.tokenKey) as string)
+    } catch (err) {
+      console.error(err)
+    }
+    if (tokenObj) {
       actualOpt.headers = {
-        authorizationType: this.authorizationType,
-        authorization: this.authorizationVal,
+        ...tokenObj,
         ...actualOpt.headers
       }
     }
@@ -87,19 +92,16 @@ export default class Http {
       ...configs,
     })
   }
-  public setDefaultConf (configs:AxiosRequestConfig = {}) {
+  static setToken(authorizationType:string, authorization:string) {
+    localStorage.setItem(this.tokenKey, JSON.stringify({
+      authorizationType,
+      authorization
+    }));
+  }
+  static setDefaultConf (configs:AxiosRequestConfig = {}) {
     axios.defaults = mergeConfig(axios.defaults, configs)
   }
-  public setTokenType(authorizationType:number|string) {
-    this.authorizationType = authorizationType;
-  }
-  public setToken(token:string) {
-    localStorage.setItem(this.authorizationKey, token);
-  }
-  public getToken() {
-    return localStorage.getItem(this.authorizationKey)
-  }
-  public setReqInterceptor (resolve?:Function, reject?:Function) {
+  static setReqInterceptor (resolve?:Function, reject?:Function) {
     // Add a request interceptor
     axios.interceptors.request.use(function (config: AxiosRequestConfig) {
       // Do something before request is sent
@@ -111,7 +113,7 @@ export default class Http {
       return Promise.reject(error);
     });
   }
-  public setResInterceptor (resolve?:Function, reject?:Function) {
+  static setResInterceptor (resolve?:Function, reject?:Function) {
     // Add a response interceptor
     axios.interceptors.response.use(function (response:AxiosResponse) {
       // Do something with response data
