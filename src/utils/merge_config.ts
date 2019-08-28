@@ -26,13 +26,13 @@ function deepMergeStrat(val1:any, val2:any): any {
   }
 }
 
-const stratKeysFromVal2 = ['url', 'params', 'data']
+const stratKeysFromVal2 = ['url', 'params', 'data', 'method']
 
 stratKeysFromVal2.forEach(key => {
   strats[key] = fromVal2Strat
 })
 
-const stratKeysDeepMerge = ['headers']
+const stratKeysDeepMerge = ['headers', 'auth', 'proxy']
 
 stratKeysDeepMerge.forEach(key => {
   strats[key] = deepMergeStrat
@@ -62,7 +62,7 @@ export default function mergeConfig (
   }
   function mergeField(key:keyof AxiosRequestConfig): void{
     const strat = strats[key] || defaultStrat
-    config[key] = strat(config1[key], config2[key])
+    config[key] = strat(config1[key], config2![key])
   }
   return config
 }

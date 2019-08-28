@@ -9,6 +9,7 @@
     "dist"
   ],
   "scripts": {
+    "dev": "node examples/server.js",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "prebuild": "rimraf dist",
@@ -61,6 +62,8 @@
   "devDependencies": {
     "@types/jasmine-ajax": "^3.1.40",
     "@types/jest": "^24.0.18",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
     "jasmine-ajax": "^4.0.0",
     "jasmine-core": "^3.4.0",
@@ -74,9 +77,13 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.23.0",
     "ts-jest": "^24.0.2",
+    "ts-loader": "^6.0.4",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.3",
+    "webpack-dev-middleware": "^3.7.0",
+    "webpack-hot-middleware": "^2.25.0"
   }
 }
