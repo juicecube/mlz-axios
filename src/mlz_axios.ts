@@ -6,7 +6,7 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 // import mergeConfig from './utils/merge_config'
-axios.defaults.timeout = 1000
+axios.defaults.timeout = 5000
 axios.defaults.withCredentials = true
 axios.defaults.validateStatus = function (status) {
   return status >= 200 && status < 599; 
