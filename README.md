@@ -1,4 +1,4 @@
-## 项目介绍
+## 介绍
 对axios做了二次封装，统一axios的配置
 ## 安装
 使用npm
@@ -18,7 +18,13 @@ axios.defaults.validateStatus = function (status) {
 }
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 ```
-## API
+## 实例化
+实例化可以传入baseUrl
+```
+import Http from 'mlz-axios'
+const httpIns = new Http('https://www.example.com')
+```
+## 静态方法
 ### setToken(tokenType, tokenVal)
 设置token，token信息存放在localstorage
 ```
