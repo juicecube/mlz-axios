@@ -1,6 +1,6 @@
 {
   "name": "mlz-axios",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "mlz-axios",
   "main": "dist/ts-axios.umd.js",
   "module": "dist/ts-axios.es5.js",
@@ -56,7 +56,9 @@
       "src/*.{js,ts}",
       "src/**/*.{js,ts}"
     ],
-    "setupFiles": ["jest-localstorage-mock"],
+    "setupFiles": [
+      "jest-localstorage-mock"
+    ],
     "setupFilesAfterEnv": [
       "<rootDir>/test/boot.ts"
     ]
