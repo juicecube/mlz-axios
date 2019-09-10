@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "node examples/server.js",
     "start": "rollup -c rollup.config.ts -w",
-    "test": "jest --coverage",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
@@ -55,6 +56,7 @@
       "src/*.{js,ts}",
       "src/**/*.{js,ts}"
     ],
+    "setupFiles": ["jest-localstorage-mock"],
     "setupFilesAfterEnv": [
       "<rootDir>/test/boot.ts"
     ]
@@ -69,6 +71,7 @@
     "jasmine-core": "^3.4.0",
     "jest": "^24.9.0",
     "jest-config": "^24.9.0",
+    "jest-localstorage-mock": "^2.4.0",
     "lodash.camelcase": "^4.3.0",
     "rollup": "^1.20.1",
     "rollup-plugin-commonjs": "^10.0.2",

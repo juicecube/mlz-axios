@@ -3,8 +3,8 @@ import { isPlainObject, deepMerge } from '../../src/utils'
 describe('utils', () => {
   describe('isPlainObject', () => {
     test('should valid PlainObject', () => {
-      expect(isPlainObject({})).toBeTruthy
-      expect(isPlainObject(new Date())).toBeFalsy
+      expect(isPlainObject({})).toBeTruthy()
+      expect(isPlainObject(new Date())).toBeFalsy()
     })
   })
   describe('deepMerge', () => {

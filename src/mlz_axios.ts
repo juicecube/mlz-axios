@@ -4,38 +4,29 @@ import axios, {
   CancelTokenSource,
   AxiosPromise,
   AxiosResponse,
+  AxiosInstance
 } from 'axios';
-// import mergeConfig from './utils/merge_config'
-axios.defaults.timeout = 5000
-axios.defaults.withCredentials = true
-axios.defaults.validateStatus = function (status) {
-  return status >= 200 && status < 599; 
-}
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+import mergeConfig from './utils/merge_config'
+// axios.defaults.timeout = 5000
+// axios.defaults.withCredentials = true
+// axios.defaults.validateStatus = function (status) {
+//   return status >= 200 && status < 599; 
+// }
+export const axiosIns:AxiosInstance = axios.create({
+  timeout: 5000,
+  withCredentials: true,
+  validateStatus: (status) => status >= 200 && status < 599
+})
 export default class Http {
   baseUrl?:string;
   static authorizationType:number|string = '';
   static readonly tokenKey:string = 'token';
   cancelToken:CancelTokenStatic = axios.CancelToken;
   source:CancelTokenSource = this.cancelToken.source();
-  // defaultConfig:AxiosRequestConfig = {
-  //   withCredentials: true,
-  //   timeout: 5000,
-  //   validateStatus: function (status) {
-  //     return status >= 200 && status < 599; 
-  //   },
-  //   headers: {
-  //     post: {
-  //       'Content-Type': 'application/x-www-form-urlencoded'
-  //     }
-  //   },
-  // }
   constructor(baseUrl?:string) {
     if (baseUrl) {
       this.baseUrl = baseUrl
     }
-    // Http.setDefaultConf(this.defaultConfig)
-    console.log(axios.defaults)
   }
   private request(opt:AxiosRequestConfig):AxiosPromise {
     const actualOpt = Object.assign({}, opt);
@@ -56,7 +47,7 @@ export default class Http {
       )
     }
     actualOpt.cancelToken = this.source.token;
-    return axios.request(actualOpt)
+    return axiosIns.request(actualOpt)
   }
   public abort() {
     this.source.cancel('API abort.')
@@ -108,12 +99,12 @@ export default class Http {
       authorization
     }));
   }
-  // static setDefaultConf (configs:AxiosRequestConfig = {}) {
-  //   axios.defaults = mergeConfig(axios.defaults, configs)
-  // }
+  static setDefaultConf (configs:AxiosRequestConfig = {}) {
+    axiosIns.defaults = mergeConfig(axiosIns.defaults, configs)
+  }
   static setReqInterceptor (resolve?:Function, reject?:Function) {
     // Add a request interceptor
-    axios.interceptors.request.use(function (config: AxiosRequestConfig) {
+    axiosIns.interceptors.request.use(function (config: AxiosRequestConfig) {
       // Do something before request is sent
       resolve && resolve(config);
       return config;
@@ -125,7 +116,7 @@ export default class Http {
   }
   static setResInterceptor (resolve?:Function, reject?:Function) {
     // Add a response interceptor
-    axios.interceptors.response.use(function (response:AxiosResponse) {
+    axiosIns.interceptors.response.use(function (response:AxiosResponse) {
       // Do something with response data
       resolve && resolve(response);
       return response;
@@ -136,3 +127,5 @@ export default class Http {
     });
   }
 }
+
+

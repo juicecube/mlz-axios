@@ -14,7 +14,9 @@
     "outDir": "dist/lib",
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
+    "noImplicitAny": false,
+    "strictNullChecks": false,
   },
   "include": [
     "src"

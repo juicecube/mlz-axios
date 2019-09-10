@@ -11,12 +11,16 @@ yarn add mlz-axios
 ```
 ## 默认axios配置
 ```
-axios.defaults.timeout = 5000
-axios.defaults.withCredentials = true
-axios.defaults.validateStatus = function (status) {
-  return status >= 200 && status < 599; 
+axios.default = {
+  timeout: 5000,
+  withCredentials: true,
+  validateStatus: status => status >= 200 && status < 599,
+  headers: {
+    post: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  }
 }
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 ```
 ## 实例化
 实例化可以传入baseUrl
@@ -49,6 +53,19 @@ Http.setResInterceptor((response) => {
   console.log(response)
 }, (err) => {
   console.log(err)
+})
+```
+### setDefaultConf(configs)
+设置默认配置
+```
+import Http from 'mlz-axios'
+Http.setDefaultConf({
+  timeout: 6000,
+  headers: {
+    post: {
+      'Content-Type': 'application/json'
+    }
+  }
 })
 ```
 ## 实例方法
