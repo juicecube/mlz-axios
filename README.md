@@ -45,7 +45,7 @@ Http.setReqInterceptor((config) => {
   console.log(err)
 })
 ```
-### setReqInterceptor(resolve, reject)
+### setResInterceptor(resolve, reject)
 设置全局响应拦截器
 ```
 import Http from 'mlz-axios'
