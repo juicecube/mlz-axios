@@ -20,7 +20,7 @@ export class Http {
   source:CancelTokenSource = this.cancelToken.source();
   public axiosIns:AxiosInstance;
   static INSTANCES:{[key:string]: AxiosInstance} = {};
-  constructor(baseUrl:string, config:AxiosRequestConfig) {
+  constructor(baseUrl:string, config:AxiosRequestConfig = {}) {
     const axiosIns = axios.create({
       baseURL: baseUrl,
       ...DEFAULT_CONFIG,

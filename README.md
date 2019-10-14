@@ -11,29 +11,22 @@ yarn add mlz-axios
 ```
 ## 默认axios配置
 ```
-axios.default = {
-  timeout: 5000,
-  withCredentials: true,
-  validateStatus: status => status >= 200 && status < 599,
-  headers: {
-    post: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  }
-}
+timeout: 5000
+withCredentials: true
+validateStatus: status => status >= 200 && status < 599
 ```
 ## 实例化
-实例化可以传入baseUrl
+实例化可以传入baseUrl和默认配置
 ```
 import Http from 'mlz-axios'
-const httpIns = new Http('https://www.example.com')
+const httpIns = new Http(baseUrl:string, config:AxiosRequestConfig)
 ```
 ## 静态方法
-### setToken(tokenType, tokenVal)
-设置token，token信息存放在localstorage
+### getInstances(key)
+获取对应的实例
 ```
 import Http from 'mlz-axios'
-Http.setToken(1, '123')
+Http.getInstances('https://www.example.com')
 ```
 ### setReqInterceptor(resolve, reject)
 设置全局请求拦截器
@@ -55,24 +48,18 @@ Http.setResInterceptor((response) => {
   console.log(err)
 })
 ```
-### setDefaultConf(configs)
-设置默认配置
+## 实例方法
+### setAuthorizationTypeOrToken(type, token)
+设置authorizationToken和authorizationType
 ```
 import Http from 'mlz-axios'
-Http.setDefaultConf({
-  timeout: 6000,
-  headers: {
-    post: {
-      'Content-Type': 'application/json'
-    }
-  }
-})
+const httpIns = new Http('https://www.example.com')
+httpIns.setAuthorizationTypeOrToken(1, 'token')
 ```
-## 实例方法
 ### get(url[, config])
 ```
 import Http from 'mlz-axios'
-const httpIns = new Http()
+const httpIns = new Http('https://www.example.com')
 httpIns.get('/user')
   .then(function (response) {
     // handle success
@@ -89,7 +76,7 @@ httpIns.get('/user')
 ### delete(url[, config])
 ```
 import Http from 'mlz-axios'
-const httpIns = new Http()
+const httpIns = new Http('https://www.example.com')
 httpIns.delete('/user')
   .then(function (response) {
     // handle success
@@ -106,7 +93,7 @@ httpIns.delete('/user')
 ### post(url[, data[, config]])
 ```
 import Http from 'mlz-axios'
-const httpIns = new Http()
+const httpIns = new Http('https://www.example.com')
 httpIns.post('/user', {
     firstName: 'Fred',
     lastName: 'Flintstone'
@@ -126,7 +113,7 @@ httpIns.post('/user', {
 ### put(url[, data[, config]])
 ```
 import Http from 'mlz-axios'
-const httpIns = new Http()
+const httpIns = new Http('https://www.example.com')
 httpIns.put('/user', {
     firstName: 'Fred',
     lastName: 'Flintstone'
@@ -146,7 +133,7 @@ httpIns.put('/user', {
 ### patch(url[, data[, config]])
 ```
 import Http from 'mlz-axios'
-const httpIns = new Http()
+const httpIns = new Http('https://www.example.com')
 httpIns.patch('/user', {
     firstName: 'Fred',
     lastName: 'Flintstone'
