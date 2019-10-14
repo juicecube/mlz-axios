@@ -6,48 +6,42 @@ import axios, {
   AxiosResponse,
   AxiosInstance
 } from 'axios';
-import mergeConfig from './utils/merge_config'
-// axios.defaults.timeout = 5000
-// axios.defaults.withCredentials = true
-// axios.defaults.validateStatus = function (status) {
-//   return status >= 200 && status < 599; 
-// }
-export const axiosIns:AxiosInstance = axios.create({
+
+const DEFAULT_CONFIG:AxiosRequestConfig = {
   timeout: 5000,
   withCredentials: true,
-  validateStatus: (status) => status >= 200 && status < 599
-})
-export default class Http {
-  baseUrl?:string;
-  static authorizationType:number|string = '';
-  static readonly tokenKey:string = 'token';
+  validateStatus: (status) => status >= 200 && status < 599,
+}
+
+export class Http {
+  authorizationType;
+  authorizationToken:string = '';
   cancelToken:CancelTokenStatic = axios.CancelToken;
   source:CancelTokenSource = this.cancelToken.source();
-  constructor(baseUrl?:string) {
-    if (baseUrl) {
-      this.baseUrl = baseUrl
-    }
+  public axiosIns:AxiosInstance;
+  static INSTANCES:{[key:string]: AxiosInstance} = {};
+  constructor(baseUrl:string, config:AxiosRequestConfig) {
+    const axiosIns = axios.create({
+      baseURL: baseUrl,
+      ...DEFAULT_CONFIG,
+      ...config,
+    });
+    Http.INSTANCES[baseUrl] = axiosIns;
+    this.axiosIns = axiosIns;
   }
-  private request(opt:AxiosRequestConfig):AxiosPromise {
-    const actualOpt = Object.assign({}, opt);
-    let tokenObj = null
-    if (this.baseUrl) {
-      actualOpt.baseURL = this.baseUrl
-    }
-    try {
-      tokenObj = JSON.parse(localStorage.getItem(Http.tokenKey) as string)
-    } catch (err) {
-      console.error(err)
-    }
-    if (tokenObj) {
-      actualOpt.headers = Object.assign(
-        {},
-        tokenObj,
-        opt.headers,
-      )
-    }
-    actualOpt.cancelToken = this.source.token;
-    return axiosIns.request(actualOpt)
+  setAuthorizationTypeOrToken(type, token) {
+    this.authorizationToken = token;
+    this.authorizationType = type;
+  }
+  public request(opt:AxiosRequestConfig) {
+    const _opt = Object.assign(null, opt);
+    _opt.headers = {
+      ..._opt.headers,
+      authorization_type: this.authorizationType,
+      authorization_token: this.authorizationToken,
+    };
+    _opt.cancelToken = this.source.token;
+    return this.axiosIns.request(_opt);
   }
   public abort() {
     this.source.cancel('API abort.')
@@ -59,7 +53,7 @@ export default class Http {
       ...configs,
     });
   }
-  public post(url:string, data?:any, configs?:AxiosRequestConfig):AxiosPromise {
+  public post(url:string, data?:any, configs?:AxiosRequestConfig) : AxiosPromise {
     return this.request({
       method: 'post',
       url,
@@ -70,7 +64,7 @@ export default class Http {
       ...configs,
     })
   }
-  public put(url:string, data?:any, configs?:AxiosRequestConfig):AxiosPromise {
+  public put(url:string, data?:any, configs?:AxiosRequestConfig) : AxiosPromise {
     return this.request({
       method: 'put',
       url,
@@ -78,7 +72,7 @@ export default class Http {
       ...configs,
     })
   }
-  public patch(url:string, data?:any, configs?:AxiosRequestConfig):AxiosPromise {
+  public patch(url:string, data?:any, configs?:AxiosRequestConfig) : AxiosPromise {
     return this.request({
       method: 'patch',
       url,
@@ -86,46 +80,28 @@ export default class Http {
       ...configs,
     })
   }
-  public delete(url:string, configs?:AxiosRequestConfig):AxiosPromise {
+  public delete(url:string, configs?:AxiosRequestConfig) : AxiosPromise {
     return this.request({
       method: 'delete',
       url,
       ...configs,
     })
   }
-  static setToken(authorizationType:string|number, authorization:string) {
-    localStorage.setItem(this.tokenKey, JSON.stringify({
-      authorizationType,
-      authorization
-    }));
+  // 下面是静态方法
+  static getInstances(key:string) : AxiosInstance {
+    return Http.INSTANCES[key];
   }
-  static setDefaultConf (configs:AxiosRequestConfig = {}) {
-    axiosIns.defaults = mergeConfig(axiosIns.defaults, configs)
+  static setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void) {
+    for (let key in Http.INSTANCES) {
+      const instance = Http.INSTANCES[key];
+      instance.interceptors.request.use(resolve, reject);
+    }
   }
-  static setReqInterceptor (resolve?:Function, reject?:Function) {
-    // Add a request interceptor
-    axiosIns.interceptors.request.use(function (config: AxiosRequestConfig) {
-      // Do something before request is sent
-      resolve && resolve(config);
-      return config;
-    }, function (error) {
-      // Do something with request error
-      reject && reject(error);
-      return Promise.reject(error);
-    });
-  }
-  static setResInterceptor (resolve?:Function, reject?:Function) {
-    // Add a response interceptor
-    axiosIns.interceptors.response.use(function (response:AxiosResponse) {
-      // Do something with response data
-      resolve && resolve(response);
-      return response;
-    }, function (error) {
-      reject && reject(error);
-      // Do something with response error
-      return Promise.reject(error);
-    });
+  static setResInterceptor (resolve?:(res:AxiosResponse) => AxiosResponse, reject?:(error) => any) {
+    for (let key in Http.INSTANCES) {
+      const instance = Http.INSTANCES[key];
+      instance.interceptors.response.use(resolve, reject);
+    }
   }
 }
-
 
