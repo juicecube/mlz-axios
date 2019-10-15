@@ -13,7 +13,7 @@ const DEFAULT_CONFIG:AxiosRequestConfig = {
   validateStatus: (status) => status >= 200 && status < 599,
 }
 
-export class Http {
+export default class Http {
   authorizationType;
   authorizationToken:string = '';
   cancelToken:CancelTokenStatic = axios.CancelToken;
