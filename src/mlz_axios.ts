@@ -20,7 +20,7 @@ export class Http {
 
   static authorizationTypeKey:string = 'Authorization';
   static authorizationTokenKey:string = 'authorization_type';
-  static authorizationType:number;
+  static authorizationType:number = 3;
   static authorizationToken: string = "";
   static INSTANCES: { [key: string]: AxiosInstance } = {};
 
