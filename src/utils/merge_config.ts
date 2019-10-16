@@ -37,9 +37,6 @@ const stratKeysDeepMerge = ['headers', 'auth', 'proxy']
 stratKeysDeepMerge.forEach(key => {
   strats[key] = deepMergeStrat
 })
-function isValidKey(key: string, obj: {}): key is keyof typeof obj {
-  return key in obj;
-}
 export default function mergeConfig (
   config1:AxiosRequestConfig,
   config2:AxiosRequestConfig,
@@ -49,16 +46,16 @@ export default function mergeConfig (
   }
   const config = Object.create(null)
   for (let key in config2) {
-    if (isValidKey(key, config2)) {
-      mergeField(key)
-    }
+    // if (isValidKey(key, config2)) {
+      mergeField(key as any)
+    // }
   }
   for (let key in config1) {
-    if (isValidKey(key, config1)) {
+    // if (isValidKey(key, config1)) {
       if (!config2[key]) {
-        mergeField(key)
+        mergeField(key as any)
       }
-    }
+    // }
   }
   function mergeField(key:keyof AxiosRequestConfig): void{
     const strat = strats[key] || defaultStrat

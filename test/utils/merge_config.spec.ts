@@ -3,9 +3,9 @@ import axios from 'axios'
 
 describe('mergeConfig', () => {
   const defaults = axios.defaults
-  // test('should accept undefined for second argument', () => {
-  //   expect(mergeConfig(defaults, undefined)).toEqual(defaults)
-  // })
+  test('should accept undefined for second argument', () => {
+    expect(mergeConfig(defaults, undefined)).toEqual(defaults)
+  })
   test('should accept object for second argument', () => {
     expect(mergeConfig(defaults, {})).toEqual(defaults)
   })
@@ -36,14 +36,44 @@ describe('mergeConfig', () => {
     expect(merged.params).toBeUndefined()
     expect(merged.data).toBeUndefined()
   })
-  // test('should return default headers if pass config2 with undefined', () => {
-  //   expect(mergeConfig(
-  //     {
-  //       headers: 'x-mock-header',
-  //     },
-  //     undefined
-  //   )).toEqual({headers: 'x-mock-header'})
-  // })
+  test('should return default headers if pass config2 with undefined', () => {
+    expect(mergeConfig(
+      {
+        headers: 'x-mock-header',
+      },
+      undefined
+    )).toEqual({headers: 'x-mock-header'})
+  })
+  test('should return custom headers if pass config2 with not undefined', () => {
+    expect(mergeConfig(
+      {
+        headers: 'x-mock-header',
+      },
+      {
+        headers: 'x-mock-header1'
+      }
+    )).toEqual({headers: 'x-mock-header1'})
+  })
+  test('should return custom headers if pass config2 with plain object', () => {
+    expect(mergeConfig(
+      {
+        headers: {
+          methods: 'get',
+          withCredentials: false
+        },
+      },
+      {
+        headers: {
+          withCredentials: true
+        }
+      }
+    )).toEqual({
+      headers: {
+        methods: 'get',
+        withCredentials: true
+      },
+    })
+  })
   test('should allow setting other options', () => {
     const merged = mergeConfig(defaults, {
       timeout: 123

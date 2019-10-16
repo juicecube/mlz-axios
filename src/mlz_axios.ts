@@ -14,7 +14,7 @@ const DEFAULT_CONFIG:AxiosRequestConfig = {
 }
 
 export class Http {
-  authorizationType;
+  authorizationType:string;
   authorizationToken:string = '';
   cancelToken:CancelTokenStatic = axios.CancelToken;
   source:CancelTokenSource = this.cancelToken.source();
@@ -29,16 +29,16 @@ export class Http {
     Http.INSTANCES[baseUrl] = axiosIns;
     this.axiosIns = axiosIns;
   }
-  setAuthorizationTypeOrToken(type, token) {
+  setAuthorizationTypeOrToken(type:string, token:string) {
     this.authorizationToken = token;
     this.authorizationType = type;
   }
   public request(opt:AxiosRequestConfig) {
-    const _opt = Object.assign(null, opt);
+    const _opt = Object.assign({}, opt);
     _opt.headers = {
       ..._opt.headers,
-      authorization_type: this.authorizationType,
-      authorization_token: this.authorizationToken,
+      authorization_type: this.authorizationType || '',
+      authorization_token: this.authorizationToken || '',
     };
     _opt.cancelToken = this.source.token;
     return this.axiosIns.request(_opt);
