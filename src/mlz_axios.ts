@@ -1,6 +1,6 @@
-import axios, { 
-  AxiosRequestConfig, 
-  CancelTokenStatic, 
+import axios, {
+  AxiosRequestConfig,
+  CancelTokenStatic,
   CancelTokenSource,
   AxiosPromise,
   AxiosResponse,
@@ -14,35 +14,37 @@ const DEFAULT_CONFIG:AxiosRequestConfig = {
 }
 
 export class Http {
-  authorizationType;
-  authorizationToken:string = '';
-  cancelToken:CancelTokenStatic = axios.CancelToken;
-  source:CancelTokenSource = this.cancelToken.source();
-  public axiosIns:AxiosInstance;
-  static INSTANCES:{[key:string]: AxiosInstance} = {};
-  constructor(baseUrl:string, config:AxiosRequestConfig = {}) {
+  private cancelToken: CancelTokenStatic = axios.CancelToken;
+  private source: CancelTokenSource = this.cancelToken.source();
+  private axiosIns: AxiosInstance;
+
+  static authorizationTypeKey:string = 'Authorization';
+  static authorizationTokenKey:string = 'authorization_type';
+  static authorizationType:number;
+  static authorizationToken: string = "";
+  static INSTANCES: { [key: string]: AxiosInstance } = {};
+
+  constructor(baseUrl: string, config: AxiosRequestConfig = {}) {
     const axiosIns = axios.create({
       baseURL: baseUrl,
       ...DEFAULT_CONFIG,
-      ...config,
+      ...config
     });
     Http.INSTANCES[baseUrl] = axiosIns;
     this.axiosIns = axiosIns;
   }
-  setAuthorizationTypeOrToken(type, token) {
-    this.authorizationToken = token;
-    this.authorizationType = type;
-  }
-  public request(opt:AxiosRequestConfig) {
-    const _opt = Object.assign(null, opt);
+
+  private request(opt: AxiosRequestConfig) {
+    const _opt = Object.assign({}, opt);
     _opt.headers = {
       ..._opt.headers,
-      authorization_type: this.authorizationType,
-      authorization_token: this.authorizationToken,
+      [Http.authorizationTypeKey]: Http.authorizationType,
+      [Http.authorizationTokenKey]: Http.authorizationToken
     };
     _opt.cancelToken = this.source.token;
     return this.axiosIns.request(_opt);
   }
+
   public abort() {
     this.source.cancel('API abort.')
   }
@@ -58,9 +60,6 @@ export class Http {
       method: 'post',
       url,
       data,
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
-      },
       ...configs,
     })
   }
@@ -88,20 +87,38 @@ export class Http {
     })
   }
   // 下面是静态方法
+  static setAuthorizationTypeOrToken(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string) {
+    Http.authorizationTypeKey = typeKey;
+    Http.authorizationTokenKey = tokenKey;
+    Http.authorizationToken = tokenValue;
+    Http.authorizationType = typeValue;
+  }
+
   static getInstances(key:string) : AxiosInstance {
     return Http.INSTANCES[key];
   }
-  static setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void) {
-    for (let key in Http.INSTANCES) {
+
+  static setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void, key?:string) {
+    if(key) {
       const instance = Http.INSTANCES[key];
       instance.interceptors.request.use(resolve, reject);
+    } else {
+      for (let key in Http.INSTANCES) {
+        const instance = Http.INSTANCES[key];
+        instance.interceptors.request.use(resolve, reject);
+      }
     }
   }
-  static setResInterceptor (resolve?:(res:AxiosResponse) => AxiosResponse, reject?:(error) => any) {
-    for (let key in Http.INSTANCES) {
+
+  static setResInterceptor (resolve?:(res:AxiosResponse) => AxiosResponse, reject?:(error) => any, key?:string) {
+    if(key) {
       const instance = Http.INSTANCES[key];
       instance.interceptors.response.use(resolve, reject);
+    } else {
+      for (let key in Http.INSTANCES) {
+        const instance = Http.INSTANCES[key];
+        instance.interceptors.response.use(resolve, reject);
+      }
     }
   }
 }
-
