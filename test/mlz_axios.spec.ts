@@ -28,20 +28,37 @@ describe('class Http', () => {
     expect(httpIns.axiosIns.defaults.withCredentials).toBeFalsy()
   })
   test('setAuthorizationTypeOrToken', (done) => {
+    Http.setAuthorizationTypeOrToken('authorization_type', 3 , 'Authorization', 'token')
+
     const httpIns = new Http('https://www.example.com')
-    
-    httpIns.setAuthorizationTypeOrToken('mlz', 'token')
     httpIns.axiosIns.interceptors.request.use((config:any) => {
-      expect(config.headers.authorization_type).toBe('mlz')
-      expect(config.headers.authorization_token).toBe('token')
+      expect(config.headers.authorization_type).toBe(3)
+      expect(config.headers.Authorization).toBe('token')
       done()
       return config
     })
     httpIns.post('/abc', {
       name: 'mlz-axios'
     })
-    expect(httpIns.authorizationToken).toBe('token')
-    expect(httpIns.authorizationType).toBe('mlz')
+    expect(Http.authorizationTokenValue).toBe('token')
+    expect(Http.authorizationTypeValue).toBe(3)
+  })
+  test('setInstancesAuthorizationTypeOrToken', (done) => {
+    Http.setAuthorizationTypeOrToken('authorization_type', 3 , 'Authorization', 'token')
+    const httpIns = new Http('https://www.example.com')
+    httpIns.setInstancesAuthorizationTypeOrToken('authorization_type', 4 , 'Authorization', 'instances_token')
+
+    httpIns.axiosIns.interceptors.request.use((config:any) => {
+      expect(config.headers.authorization_type).toBe(4)
+      expect(config.headers.Authorization).toBe('instances_token')
+      done()
+      return config
+    })
+    httpIns.post('/abc', {
+      name: 'mlz-axios'
+    })
+    expect(httpIns.authorizationTokenValue).toBe('instances_token')
+    expect(httpIns.authorizationTypeValue).toBe(4)
   })
   test('getInstances', () => {
     const httpIns1 = new Http('https://www.example.com')
@@ -51,28 +68,69 @@ describe('class Http', () => {
   })
   test('setReqInterceptor', async (done) => {
     const httpIns = new Http('https://www.baidu.com')
+    const httpIns1 = new Http('https://dev-api-crm-codemaster.codemao.cn')
+    const httpIns2 = new Http('https://shequ.codemao.cn/')
+
     Http.setReqInterceptor((config:any) => {
-      config.headers.authorization_token = 'test_token'
+      config.headers.Authorization = 'test_token'
       return config
     })
+    Http.setReqInterceptor(
+      (config: any) => {
+        config.headers.Authorization = "codemao_token";
+        return config;
+      },
+      err => {
+        return Promise.reject(err);
+      },
+      'https://dev-api-crm-codemaster.codemao.cn'
+    );
     const res = await httpIns.get('/')
-    expect(res.config.headers.authorization_token).toBe('test_token')
+    const res1 = await httpIns1.get('/teachers/track')
+    const res2 = await httpIns2.get('/')
+
+    expect(res.config.headers.Authorization).toBe('test_token')
+    expect(res1.config.headers.Authorization).toBe('codemao_token')
+    expect(res2.config.headers.Authorization).toBe('test_token')
     done()
   })
-  test('setResInterceptor', async (done) => {
-    const httpIns = new Http('https://www.baidu.com')
-    Http.setResInterceptor((res:any) => {
+  test("setResInterceptor", async done => {
+    const httpIns = new Http("https://www.baidu.com");
+    const httpIns1 = new Http("https://dev-api-crm-codemaster.codemao.cn");
+    const httpIns2 = new Http("https://shequ.codemao.cn/");
+
+    Http.setResInterceptor((res: any) => {
       res = {
         data: {
-          name: 'helloWorld'
+          name: "helloWorld"
         }
-      }
-      return res
-    })
-    const res = await httpIns.get('/')
-    expect(res.data).toEqual({name: 'helloWorld'})
-    done()
-  })
+      };
+      return res;
+    });
+    Http.setResInterceptor(
+      (res: any) => {
+        res = {
+          data: {
+            name: "hello"
+          }
+        };
+        return res;
+      },
+      err => {
+        return Promise.reject(err);
+      },
+      "https://dev-api-crm-codemaster.codemao.cn"
+    );
+    const res = await httpIns.get("/");
+    const res1 = await httpIns1.get("/teachers/track");
+    const res2 = await httpIns2.get("/");
+
+    expect(res.data).toEqual({ name: "helloWorld" });
+    expect(res1.data).toEqual({ name: "hello" });
+    expect(res2.data).toEqual({ name: "helloWorld" });
+
+    done();
+  });
   test('post', (done) => {
     const httpIns = new Http('https://www.example.com')
     httpIns.axiosIns.interceptors.request.use((config:any) => {

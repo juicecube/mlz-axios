@@ -47,7 +47,7 @@ Http.getInstances("https://www.example.com");
 ```
 
 ```js
-setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void, key?:string)
+setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void, url?:string)
 ```
 
 设置全局请求拦截器
@@ -81,7 +81,7 @@ Http.setReqInterceptor(
 ```
 
 ```js
-setResInterceptor (resolve?:(res:AxiosResponse) => AxiosResponse, reject?:(error) => any, key?:string)
+setResInterceptor (resolve?:(res:AxiosResponse) => AxiosResponse, reject?:(error) => any, url?:string)
 ```
 
 设置全局响应拦截器
