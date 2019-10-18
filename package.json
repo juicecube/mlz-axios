@@ -17,7 +17,7 @@
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "test:prod": "npm run lint && npm run test -- --no-cache",
-    "prepub": "npm run build",
+    "prepub": "npm run test:prod && npm run build",
     "pub": "sh release.sh"
   },
   "repository": {
