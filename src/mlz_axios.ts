@@ -42,6 +42,7 @@ export class Http {
     this.axiosIns = axiosIns;
   }
 
+  // 设置单个实例的token与tokenType
   public setInstancesAuthorizationTypeOrToken(
     typeKey: string,
     typeValue: number,
@@ -77,7 +78,7 @@ export class Http {
   public abort() {
     this.source.cancel("API abort.");
   }
-  public get(url: string, configs?: AxiosRequestConfig) {
+  public get(url: string, configs?: AxiosRequestConfig) : AxiosPromise {
     return this.request({
       method: "get",
       url,
@@ -116,7 +117,7 @@ export class Http {
     });
   }
 
-  // 下面是静态方法
+  // 全局设置token与tokenType
   static setAuthorizationTypeOrToken(
     typeKey: string,
     typeValue: number,
@@ -129,10 +130,12 @@ export class Http {
     Http.authorizationTypeValue = typeValue;
   }
 
+  // 获取相对应的实例
   static getInstances(key: string): AxiosInstance {
     return Http.INSTANCES[key];
   }
 
+  // 设置请求拦截器
   static setReqInterceptor(
     resolve?: (config: AxiosRequestConfig) => AxiosRequestConfig,
     reject?: (error: any) => void,
@@ -157,6 +160,7 @@ export class Http {
     }
   }
 
+  // 设置响应拦截器
   static setResInterceptor(
     resolve?: (res: AxiosResponse) => AxiosResponse,
     reject?: (error) => any,

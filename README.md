@@ -46,6 +46,11 @@ import Http from "mlz-axios";
 Http.getInstances("https://www.example.com");
 ```
 
+全局设置token与tokenType
+```js
+setAuthorizationTypeOrToken(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
+```
+
 ```js
 setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void, url?:string)
 ```
@@ -118,16 +123,17 @@ Http.setResInterceptor(
 ## 实例方法
 
 ```js
-setAuthorizationTypeOrToken(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
+setInstancesAuthorizationTypeOrToken(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
 ```
 
-设置 authorizationToken 和 authorizationType
+设置实例的 authorizationTokenToken 和 authorizationType
 
 ```js
 import Http from "mlz-axios";
+const httpIns = new Http('https://xxx.xxx.com')
 const token = "xxx";
 const type = 3;
-Http.setAuthorizationTypeOrToken("authorization_type", type, "Authorization", token);
+httpIns.setInstancesAuthorizationTypeOrToken("authorization_type", type, "Authorization", token);
 ```
 
 ### get(url[, config])
@@ -236,5 +242,63 @@ httpIns
   })
   .finally(function() {
     // always executed
+  });
+```
+
+## 例子
+```js
+import Http from "mlz-axios";
+
+const token = localStorage.getItem('authorization')
+const AUTHORIZATION_TYPE = 3
+
+// 全局设置token与tokenType
+Http.setAuthorizationTypeOrToken('authorization_type', AUTHORIZATION_TYPE, 'Authorization', token)
+
+const httpIns = new Http('https://xxx.aaa.com');
+const httpIns2 = new Http('https://xxx.bbb.com');
+const httpIns3 = new Http('https://xxx.ccc.com');
+
+const httpIns2Token = localStorage.getItem('authorization_httpIns2')
+const AUTHORIZATION_HTTPINS_2_TYPE = 4
+
+// 设置单个实例的token与tokenType
+httpIns2.setInstancesAuthorizationTypeOrToken('authorization_type', AUTHORIZATION_HTTPINS_2_TYPE, 'Authorization', httpIns2Token)
+
+//对单个实例设置请求拦截器
+Http.setReqInterceptor(
+  config => {
+    console.log(config)
+  },
+  err => {
+    return Promise.reject(err);
+  },
+  'https://xxx.aaa.com'
+);
+
+httpIns
+  .post("/xxx/xxx/xxx", {
+    id: "xxx",
+  })
+  .then(res => {})
+  .catch(err => {
+    console.log(err);
+  });
+
+httpIns2
+  .get("/xxx/xxx/xxx", { params: { id: 1 } })
+  .then(res => {});
+
+httpIns3
+  .get("/xxx/xxxx")
+  .then(res => {
+    if (/^2/.test(res.status)) {
+      console.log(res.data);
+    } else {
+      console.log(res.data.error_code);
+    }
+  })
+  .catch(err => {
+    console.log(err);
   });
 ```

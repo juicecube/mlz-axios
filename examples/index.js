@@ -71,4 +71,16 @@ httpIns2
   .then(res => {});
 
 // httpIns3.setInstancesAuthorizationTypeOrToken("type", 1, "token", "xxx");
-httpIns3.get("/teachers/track").then(res => {});
+httpIns3
+  .get("/teachers/tracsk")
+  .then(res => {
+    console.log('res: ', res);
+    if (/^2/.test(res.status)) {
+      console.log("object");
+    } else {
+      console.log(res.data.error_code);
+    }
+  })
+  .catch(err => {
+    console.log(err);
+  });
