@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "8"
+brancher: 
+  only:
+    - "dev"
+    - "master"
+install:
+  - "npm install"
+  - "npm install -g coveralls"
+script:
+  - "npx jest --coverage --coverageReporters=text-lcov | coveralls "
+  - "codecov"
