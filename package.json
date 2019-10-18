@@ -56,6 +56,8 @@
       "src/*.{js,ts}",
       "src/**/*.{js,ts}"
     ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
     "setupFiles": [],
     "setupFilesAfterEnv": [
       "<rootDir>/test/boot.ts"
