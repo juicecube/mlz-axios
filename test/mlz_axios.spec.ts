@@ -102,7 +102,6 @@ describe('class Http', () => {
     try {
       const res = await httpIns.get('/')
       const res1 = await httpIns1.get('/')
-      console.log(res)
       expect(res.config.headers.Authorization).toBe('test_token')
       expect(res1.config.headers.Authorization).toBe('codemao_token')
       done()
@@ -160,13 +159,15 @@ describe('class Http', () => {
       };
       return res;
     });
-    const res = await httpIns.get("/");
-    const res1 = await httpIns1.get("/");
-
-    expect(res.data).toEqual({ name: "helloWorld" });
-    expect(res1.data).toEqual({ name: "hello" });
-
-    done();
+    try {
+      const res = await httpIns.get("/");
+      const res1 = await httpIns1.get("/");
+      expect(res.data).toEqual({ name: "helloWorld" });
+      expect(res1.data).toEqual({ name: "hello" });
+      done();
+    } catch (err) {
+      console.error(err)
+    }
   });
   test('post', (done) => {
     const httpIns = new Http('https://www.example.com')

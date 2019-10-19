@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/juicecube/mlz-axios.svg?branch=master)](https://travis-ci.org/juicecube/mlz-axios)
+
 ## 介绍
 
 对 axios 做了二次封装，统一 axios 的配置
