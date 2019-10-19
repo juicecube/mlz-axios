@@ -104,7 +104,7 @@ describe('class Http', () => {
     expect(res.config.headers.Authorization).toBe('test_token')
     expect(res1.config.headers.Authorization).toBe('codemao_token')
     done()
-  })
+  }, 10000)
   test("setResInterceptor", async done => {
     const httpIns = new Http("https://www.baidu.com");
     const httpIns1 = new Http("https://www.qq.com");
