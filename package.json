@@ -12,7 +12,7 @@
     "dev": "node examples/server.js",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest",
-    "coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "coverage": "jest --coverage",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
