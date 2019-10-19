@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/juicecube/mlz-axios.svg?branch=master)](https://travis-ci.org/juicecube/mlz-axios)
+[![codecov](https://codecov.io/gh/juicecube/mlz-axios/branch/master/graph/badge.svg)](https://codecov.io/gh/juicecube/mlz-axios)
 
 ## 介绍
 
