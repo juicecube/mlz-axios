@@ -147,8 +147,10 @@ export class Http {
       if (interceptorsId !== undefined) {
         instance.interceptors.request.eject(interceptorsId);
       }
-      const CreateInterceptorsId = instance.interceptors.request.use(resolve, reject);
-      Http.INSTANCES_REQUEST_INTERCEPTORS[url] = CreateInterceptorsId;
+      if (instance) {
+        const CreateInterceptorsId = instance.interceptors.request.use(resolve, reject);
+        Http.INSTANCES_REQUEST_INTERCEPTORS[url] = CreateInterceptorsId;
+      }
     } else {
       for (let key in Http.INSTANCES) {
         if (Http.INSTANCES_REQUEST_INTERCEPTORS[key] === undefined) {
@@ -172,8 +174,10 @@ export class Http {
       if (interceptorsId !== undefined) {
         instance.interceptors.response.eject(interceptorsId);
       }
-      const CreateInterceptorsId = instance.interceptors.response.use(resolve, reject);
-      Http.INSTANCES_RESPONSE_INTERCEPTORS[url] = CreateInterceptorsId;
+      if (instance) {
+        const CreateInterceptorsId = instance.interceptors.response.use(resolve, reject);
+        Http.INSTANCES_RESPONSE_INTERCEPTORS[url] = CreateInterceptorsId;
+      }
     } else {
       for (let key in Http.INSTANCES) {
         if (Http.INSTANCES_RESPONSE_INTERCEPTORS[key] === undefined) {

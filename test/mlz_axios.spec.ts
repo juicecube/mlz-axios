@@ -68,8 +68,7 @@ describe('class Http', () => {
   })
   test('setReqInterceptor', async (done) => {
     const httpIns = new Http('https://www.baidu.com')
-    const httpIns1 = new Http('https://dev-api-crm-codemaster.codemao.cn')
-    const httpIns2 = new Http('https://shequ.codemao.cn/')
+    const httpIns1 = new Http('https://www.qq.com')
 
     Http.setReqInterceptor((config:any) => {
       config.headers.Authorization = 'test_token'
@@ -83,21 +82,32 @@ describe('class Http', () => {
       err => {
         return Promise.reject(err);
       },
-      'https://dev-api-crm-codemaster.codemao.cn'
+      'https://www.qq.com'
     );
+    Http.setReqInterceptor(
+      (config: any) => {
+        config.headers.Authorization = "codemao_token1";
+        return config;
+      },
+      err => {
+        return Promise.reject(err);
+      },
+      'https://www.aa.com'
+    );
+    Http.setReqInterceptor((config:any) => {
+      config.headers.Authorization = 'test_token'
+      return config
+    })
     const res = await httpIns.get('/')
-    const res1 = await httpIns1.get('/teachers/track')
-    const res2 = await httpIns2.get('/')
+    const res1 = await httpIns1.get('/')
 
     expect(res.config.headers.Authorization).toBe('test_token')
     expect(res1.config.headers.Authorization).toBe('codemao_token')
-    expect(res2.config.headers.Authorization).toBe('test_token')
     done()
   })
   test("setResInterceptor", async done => {
     const httpIns = new Http("https://www.baidu.com");
-    const httpIns1 = new Http("https://dev-api-crm-codemaster.codemao.cn");
-    const httpIns2 = new Http("https://shequ.codemao.cn/");
+    const httpIns1 = new Http("https://www.qq.com");
 
     Http.setResInterceptor((res: any) => {
       res = {
@@ -119,15 +129,35 @@ describe('class Http', () => {
       err => {
         return Promise.reject(err);
       },
-      "https://dev-api-crm-codemaster.codemao.cn"
+      "https://www.qq.com"
     );
+    Http.setResInterceptor(
+      (res: any) => {
+        res = {
+          data: {
+            name: "hello world 1"
+          }
+        };
+        return res;
+      },
+      err => {
+        return Promise.reject(err);
+      },
+      "https://www.aa.com"
+    );
+    Http.setResInterceptor((res: any) => {
+      res = {
+        data: {
+          name: "helloWorld"
+        }
+      };
+      return res;
+    });
     const res = await httpIns.get("/");
-    const res1 = await httpIns1.get("/teachers/track");
-    const res2 = await httpIns2.get("/");
+    const res1 = await httpIns1.get("/");
 
     expect(res.data).toEqual({ name: "helloWorld" });
     expect(res1.data).toEqual({ name: "hello" });
-    expect(res2.data).toEqual({ name: "helloWorld" });
 
     done();
   });

@@ -9,9 +9,7 @@ function defaultStrat(val1:any, val2:any): any {
 }
 
 function fromVal2Strat(val1:any, val2:any): any {
-  if (typeof val2 !== undefined) {
-    return val2
-  }
+  return val2
 }
 
 function deepMergeStrat(val1:any, val2:any): any {
