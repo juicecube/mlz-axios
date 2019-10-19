@@ -99,12 +99,17 @@ describe('class Http', () => {
       config.headers.Authorization = 'test_token'
       return config
     })
-    const res = await httpIns.get('/')
-    const res1 = await httpIns1.get('/')
-
-    expect(res.config.headers.Authorization).toBe('test_token')
-    expect(res1.config.headers.Authorization).toBe('codemao_token')
-    done()
+    try {
+      const res = await httpIns.get('/')
+      const res1 = await httpIns1.get('/')
+      console.log(res)
+      expect(res.config.headers.Authorization).toBe('test_token')
+      expect(res1.config.headers.Authorization).toBe('codemao_token')
+      done()
+    } catch (err) {
+      console.error(err)
+      done()
+    }
   })
   test("setResInterceptor", async done => {
     jest.setTimeout(10000)
