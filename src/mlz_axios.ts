@@ -59,17 +59,30 @@ export class Http {
   private request(opt: AxiosRequestConfig) {
     const _opt = Object.assign({}, opt);
     if (this.isSetInstancesToken) {
-      _opt.headers = {
-        ..._opt.headers,
-        [this.authorizationTypeKey]: this.authorizationTypeValue,
-        [this.authorizationTokenKey]: this.authorizationTokenValue
-      };
+      if (!this.authorizationTypeValue && !this.authorizationTokenValue) {
+        _opt.headers = {
+          ..._opt.headers,
+        };
+      } else {
+        _opt.headers = {
+          ..._opt.headers,
+          [this.authorizationTypeKey]: this.authorizationTypeValue,
+          [this.authorizationTokenKey]: this.authorizationTokenValue
+        };
+      }
     } else {
-      _opt.headers = {
-        ..._opt.headers,
-        [Http.authorizationTypeKey]: Http.authorizationTypeValue,
-        [Http.authorizationTokenKey]: Http.authorizationTokenValue
-      };
+      if (!Http.authorizationTypeValue && !Http.authorizationTokenValue) {
+        _opt.headers = {
+          ..._opt.headers,
+        };
+      } else {
+        _opt.headers = {
+          ..._opt.headers,
+          [Http.authorizationTypeKey]: Http.authorizationTypeValue,
+          [Http.authorizationTokenKey]: Http.authorizationTokenValue
+        };
+      }
+      
     }
     _opt.cancelToken = this.source.token;
     return this.axiosIns.request(_opt);
