@@ -60,6 +60,28 @@ describe('class Http', () => {
     expect(httpIns.authorizationTokenValue).toBe('instances_token')
     expect(httpIns.authorizationTypeValue).toBe(4)
   })
+  test('request with no set instance token', (done) => {
+    const httpIns = new Http('https://www.example1.com')
+    Http.setAuthorizationTypeOrToken('authorization_type', 0 , 'Authorization', '')
+    httpIns.axiosIns.interceptors.request.use((config:any) => {
+      expect(config.headers.authorization_type).toBeFalsy()
+      expect(config.headers.Authorization).toBeFalsy()
+      done()
+      return config
+    })
+    httpIns.get('/abc')
+  })
+  test('request with no set global token', (done) => {
+    const httpIns = new Http('https://www.example1.com')
+    httpIns.setInstancesAuthorizationTypeOrToken('authorization_type', 0 , 'Authorization', '')
+    httpIns.axiosIns.interceptors.request.use((config:any) => {
+      expect(config.headers.authorization_type).toBeFalsy()
+      expect(config.headers.Authorization).toBeFalsy()
+      done()
+      return config
+    })
+    httpIns.get('/abc')
+  })
   test('getInstances', () => {
     const httpIns1 = new Http('https://www.example.com')
     const httpIns2 = new Http(('https://www.baidu.com'))
