@@ -28,7 +28,12 @@ describe('class Http', () => {
     expect(httpIns.axiosIns.defaults.withCredentials).toBeFalsy()
   })
   test('setAuthorizationTypeOrToken', (done) => {
-    Http.setAuthorizationTypeOrToken('authorization_type', 3 , 'Authorization', 'token')
+    Http.setGlobalTokenConfig({
+      authorizationTypeKey: 'authorization_type',
+      authorizationTokenKey: 'Authorization',
+      authorizationTypeValue: 3,
+      authorizationTokenValue: 'token',
+    })
 
     const httpIns = new Http('https://www.example.com')
     httpIns.axiosIns.interceptors.request.use((config:any) => {
@@ -40,13 +45,23 @@ describe('class Http', () => {
     httpIns.post('/abc', {
       name: 'mlz-axios'
     })
-    expect(Http.authorizationTokenValue).toBe('token')
-    expect(Http.authorizationTypeValue).toBe(3)
+    expect(Http.globalTokenConfig.authorizationTokenValue).toBe('token')
+    expect(Http.globalTokenConfig.authorizationTypeValue).toBe(3)
   })
   test('setInstancesAuthorizationTypeOrToken', (done) => {
-    Http.setAuthorizationTypeOrToken('authorization_type', 3 , 'Authorization', 'token')
+    Http.setGlobalTokenConfig({
+      authorizationTypeKey: 'authorization_type',
+      authorizationTokenKey: 'Authorization',
+      authorizationTypeValue: 3,
+      authorizationTokenValue: 'token',
+    })
     const httpIns = new Http('https://www.example.com')
-    httpIns.setInstancesAuthorizationTypeOrToken('authorization_type', 4 , 'Authorization', 'instances_token')
+    httpIns.setInstanceTokenConfig({
+      authorizationTypeKey: 'authorization_type',
+      authorizationTokenKey: 'Authorization',
+      authorizationTypeValue: 4,
+      authorizationTokenValue: 'instances_token',
+    })
 
     httpIns.axiosIns.interceptors.request.use((config:any) => {
       expect(config.headers.authorization_type).toBe(4)
@@ -57,12 +72,17 @@ describe('class Http', () => {
     httpIns.post('/abc', {
       name: 'mlz-axios'
     })
-    expect(httpIns.authorizationTokenValue).toBe('instances_token')
-    expect(httpIns.authorizationTypeValue).toBe(4)
+    expect(httpIns.instanceTokenConfig.authorizationTokenValue).toBe('instances_token')
+    expect(httpIns.instanceTokenConfig.authorizationTypeValue).toBe(4)
   })
   test('request with no set instance token', (done) => {
     const httpIns = new Http('https://www.example1.com')
-    Http.setAuthorizationTypeOrToken('authorization_type', 0 , 'Authorization', '')
+    Http.setGlobalTokenConfig({
+      authorizationTypeKey: 'authorization_type',
+      authorizationTokenKey: 'Authorization',
+      authorizationTypeValue: 0,
+      authorizationTokenValue: '',
+    })
     httpIns.axiosIns.interceptors.request.use((config:any) => {
       expect(config.headers.authorization_type).toBeFalsy()
       expect(config.headers.Authorization).toBeFalsy()
@@ -73,7 +93,12 @@ describe('class Http', () => {
   })
   test('request with no set global token', (done) => {
     const httpIns = new Http('https://www.example1.com')
-    httpIns.setInstancesAuthorizationTypeOrToken('authorization_type', 0 , 'Authorization', '')
+    httpIns.setInstanceTokenConfig({
+      authorizationTypeKey: 'authorization_type',
+      authorizationTokenKey: 'Authorization',
+      authorizationTypeValue: 0,
+      authorizationTokenValue: '',
+    })
     httpIns.axiosIns.interceptors.request.use((config:any) => {
       expect(config.headers.authorization_type).toBeFalsy()
       expect(config.headers.Authorization).toBeFalsy()

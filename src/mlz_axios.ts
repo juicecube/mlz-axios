@@ -7,6 +7,13 @@ import axios, {
   AxiosInstance
 } from "axios";
 
+type TokenConfig = {
+  authorizationTypeKey: string;
+  authorizationTokenKey: string;
+  authorizationTypeValue: number;
+  authorizationTokenValue: string;
+}
+
 const DEFAULT_CONFIG: AxiosRequestConfig = {
   timeout: 5000,
   withCredentials: true,
@@ -19,15 +26,20 @@ export class Http {
   public cancelToken: CancelTokenStatic = axios.CancelToken;
   public axiosIns: AxiosInstance;
   public source: CancelTokenSource = this.cancelToken.source();
-  public authorizationTypeKey: string = "Authorization";
-  public authorizationTokenKey: string = "authorization_type";
-  public authorizationTypeValue: number;
-  public authorizationTokenValue: string = "";
+  public instanceTokenConfig:TokenConfig = {
+    authorizationTypeKey: "Authorization",
+    authorizationTokenKey: "authorization_type",
+    authorizationTypeValue: 0,
+    authorizationTokenValue: ""
+  }
 
-  static authorizationTypeKey: string = "Authorization";
-  static authorizationTokenKey: string = "authorization_type";
-  static authorizationTypeValue: number;
-  static authorizationTokenValue: string = "";
+  static globalTokenConfig:TokenConfig = {
+    authorizationTypeKey: "Authorization",
+    authorizationTokenKey: "authorization_type",
+    authorizationTypeValue: 0,
+    authorizationTokenValue: ""
+  }
+
   static INSTANCES: { [key: string]: AxiosInstance } = {};
   static INSTANCES_REQUEST_INTERCEPTORS: { [key: string]: number } = {};
   static INSTANCES_RESPONSE_INTERCEPTORS: { [key: string]: number } = {};
@@ -43,46 +55,34 @@ export class Http {
   }
 
   // 设置单个实例的token与tokenType
-  public setInstancesAuthorizationTypeOrToken(
-    typeKey: string,
-    typeValue: number,
-    tokenKey: string,
-    tokenValue: string
-  ) {
+  public setInstanceTokenConfig( instanceTokenConfig:Partial<TokenConfig>) {
     this.isSetInstancesToken = true;
-    this.authorizationTypeKey = typeKey;
-    this.authorizationTokenKey = tokenKey;
-    this.authorizationTokenValue = tokenValue;
-    this.authorizationTypeValue = typeValue;
+    this.instanceTokenConfig = {
+      ...this.instanceTokenConfig,
+      ...instanceTokenConfig
+    }
   }
 
   private request(opt: AxiosRequestConfig) {
     const _opt = Object.assign({}, opt);
     if (this.isSetInstancesToken) {
-      if (!this.authorizationTypeValue && !this.authorizationTokenValue) {
+      const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = this.instanceTokenConfig
+      if (authorizationTypeKey && authorizationTypeValue && authorizationTokenKey && authorizationTokenValue){
         _opt.headers = {
           ..._opt.headers,
-        };
-      } else {
-        _opt.headers = {
-          ..._opt.headers,
-          [this.authorizationTypeKey]: this.authorizationTypeValue,
-          [this.authorizationTokenKey]: this.authorizationTokenValue
+          [authorizationTypeKey]: authorizationTypeValue,
+          [authorizationTokenKey]: authorizationTokenValue
         };
       }
     } else {
-      if (!Http.authorizationTypeValue && !Http.authorizationTokenValue) {
+      const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = Http.globalTokenConfig
+      if (authorizationTypeKey && authorizationTypeValue && authorizationTokenKey && authorizationTokenValue) {
         _opt.headers = {
           ..._opt.headers,
-        };
-      } else {
-        _opt.headers = {
-          ..._opt.headers,
-          [Http.authorizationTypeKey]: Http.authorizationTypeValue,
-          [Http.authorizationTokenKey]: Http.authorizationTokenValue
+          [authorizationTypeKey]: authorizationTypeValue,
+          [authorizationTokenKey]: authorizationTokenValue
         };
       }
-      
     }
     _opt.cancelToken = this.source.token;
     return this.axiosIns.request(_opt);
@@ -131,16 +131,11 @@ export class Http {
   }
 
   // 全局设置token与tokenType
-  static setAuthorizationTypeOrToken(
-    typeKey: string,
-    typeValue: number,
-    tokenKey: string,
-    tokenValue: string
-  ) {
-    Http.authorizationTypeKey = typeKey;
-    Http.authorizationTokenKey = tokenKey;
-    Http.authorizationTokenValue = tokenValue;
-    Http.authorizationTypeValue = typeValue;
+  static setGlobalTokenConfig(globalTokenConfig:Partial<TokenConfig>) {
+    Http.globalTokenConfig = {
+      ...Http.globalTokenConfig,
+      ...globalTokenConfig
+    }
   }
 
   // 获取相对应的实例
