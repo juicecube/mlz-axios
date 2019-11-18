@@ -10,13 +10,13 @@
 使用 npm
 
 ```
-npm install mlz-axios
+npm install @mlz/axios
 ```
 
 使用 yarn
 
 ```
-yarn add mlz-axios
+yarn add @mlz/axios
 ```
 
 ## 默认 axios 配置
@@ -37,29 +37,40 @@ const httpIns = new Http(baseUrl:string, config:AxiosRequestConfig)
 ```
 
 ## 静态方法
-
+### 获取对应的实例
 ```js
 getInstances(key:string)
 ```
-
-获取对应的实例
-
+示例:
 ```js
 import Http from "mlz-axios";
 Http.getInstances("https://www.example.com");
 ```
 
-全局设置token与tokenType
+### 全局设置token与tokenType
 ```js
-setAuthorizationTypeOrToken(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
+setGlobalTokenConfig({
+  authorizationTypeKey?: string;
+  authorizationTokenKey?: string;
+  authorizationTypeValue?: number;
+  authorizationTokenValue?: string;
+})
 ```
-
+示例：
+```js
+import Http from "mlz-axios";
+Http.setGlobalTokenConfig({
+  authorizationTypeKey: 'authorization_type',
+  authorizationTokenKey: 'Authorization',
+  authorizationTypeValue: 1
+  authorizationTokenValue: 'token'
+});
+```
+设置请求拦截器
 ```js
 setReqInterceptor (resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig, reject?:(error:any) => void, url?:string)
 ```
-
 设置全局请求拦截器
-
 ```js
 import Http from "mlz-axios";
 Http.setReqInterceptor(
@@ -87,7 +98,7 @@ Http.setReqInterceptor(
   "https://xxx.xxx.com"
 );
 ```
-
+### 设置响应拦截器
 ```js
 setResInterceptor (resolve?:(res:AxiosResponse) => AxiosResponse, reject?:(error) => any, url?:string)
 ```
@@ -124,19 +135,17 @@ Http.setResInterceptor(
 ```
 
 ## 实例方法
-
-```js
-setInstancesAuthorizationTypeOrToken(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
-```
-
 设置实例的 authorizationTokenToken 和 authorizationType
-
+```js
+setInstanceTokenConfig(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
+```
+示例：
 ```js
 import Http from "mlz-axios";
 const httpIns = new Http('https://xxx.xxx.com')
 const token = "xxx";
 const type = 3;
-httpIns.setInstancesAuthorizationTypeOrToken("authorization_type", type, "Authorization", token);
+httpIns.setInstanceTokenConfig("authorization_type", type, "Authorization", token);
 ```
 
 ### get(url[, config])
@@ -256,7 +265,12 @@ const token = localStorage.getItem('authorization')
 const AUTHORIZATION_TYPE = 3
 
 // 全局设置token与tokenType
-Http.setAuthorizationTypeOrToken('authorization_type', AUTHORIZATION_TYPE, 'Authorization', token)
+Http.setGlobalTokenConfig({
+  authorizationTypeKey: 'Authorization',
+  authorizationTokenKey: 'authorization_type',
+  authorizationTypeValue: AUTHORIZATION_TYPE,
+  authorizationTokenValue: token
+})
 
 const httpIns = new Http('https://xxx.aaa.com');
 const httpIns2 = new Http('https://xxx.bbb.com');
@@ -266,7 +280,12 @@ const httpIns2Token = localStorage.getItem('authorization_httpIns2')
 const AUTHORIZATION_HTTPINS_2_TYPE = 4
 
 // 设置单个实例的token与tokenType
-httpIns2.setInstancesAuthorizationTypeOrToken('authorization_type', AUTHORIZATION_HTTPINS_2_TYPE, 'Authorization', httpIns2Token)
+httpIns2.setInstanceTokenConfig({
+  authorizationTypeKey: 'Authorization',
+  authorizationTokenKey: 'authorization_type',
+  authorizationTypeValue: AUTHORIZATION_HTTPINS_2_TYPE,
+  authorizationTokenValue: httpIns2Token
+})
 
 //对单个实例设置请求拦截器
 Http.setReqInterceptor(
