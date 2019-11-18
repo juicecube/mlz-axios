@@ -1,5 +1,5 @@
 {
-  "name": "mlz-axios",
+  "name": "@mlz/axios",
   "version": "1.0.0",
   "description": "mlz-axios",
   "main": "dist/ts-axios.umd.js",
