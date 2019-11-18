@@ -18,7 +18,6 @@ deploy:
   api_key: "$NPM_TOKEN"
   skip_cleanup: true
   on:
-    tags: true
     branch: master
   tag: latest
   condition: '$TRAVIS_TAG =~ ^v[0-9]+.[0-9]+.[0-9]+$'
