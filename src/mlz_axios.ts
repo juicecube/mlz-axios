@@ -1,11 +1,10 @@
 import axios, {
   AxiosRequestConfig,
-  CancelTokenStatic,
   CancelTokenSource,
   AxiosPromise,
   AxiosResponse,
   AxiosInstance
-} from "axios";
+} from 'axios';
 
 type TokenConfig = {
   authorizationTypeKey: string;
@@ -23,21 +22,20 @@ const DEFAULT_CONFIG: AxiosRequestConfig = {
 export class Http {
   private isSetInstancesToken: boolean = false;
 
-  public cancelToken: CancelTokenStatic = axios.CancelToken;
   public axiosIns: AxiosInstance;
-  public source: CancelTokenSource = this.cancelToken.source();
+  public source: CancelTokenSource = axios.CancelToken.source();
   public instanceTokenConfig:TokenConfig = {
-    authorizationTypeKey: "Authorization",
-    authorizationTokenKey: "authorization_type",
+    authorizationTypeKey: 'Authorization',
+    authorizationTokenKey: 'authorization_type',
     authorizationTypeValue: 0,
-    authorizationTokenValue: ""
+    authorizationTokenValue: ''
   }
 
   static globalTokenConfig:TokenConfig = {
-    authorizationTypeKey: "Authorization",
-    authorizationTokenKey: "authorization_type",
+    authorizationTypeKey: 'Authorization',
+    authorizationTokenKey: 'authorization_type',
     authorizationTypeValue: 0,
-    authorizationTokenValue: ""
+    authorizationTokenValue: ''
   }
 
   static INSTANCES: { [key: string]: AxiosInstance } = {};
@@ -69,18 +67,18 @@ export class Http {
       const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = this.instanceTokenConfig
       if (authorizationTypeKey && authorizationTypeValue && authorizationTokenKey && authorizationTokenValue){
         _opt.headers = {
-          ..._opt.headers,
           [authorizationTypeKey]: authorizationTypeValue,
-          [authorizationTokenKey]: authorizationTokenValue
+          [authorizationTokenKey]: authorizationTokenValue,
+          ..._opt.headers,
         };
       }
     } else {
       const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = Http.globalTokenConfig
       if (authorizationTypeKey && authorizationTypeValue && authorizationTokenKey && authorizationTokenValue) {
         _opt.headers = {
-          ..._opt.headers,
           [authorizationTypeKey]: authorizationTypeValue,
-          [authorizationTokenKey]: authorizationTokenValue
+          [authorizationTokenKey]: authorizationTokenValue,
+          ..._opt.headers,
         };
       }
     }
@@ -89,18 +87,18 @@ export class Http {
   }
 
   public abort() {
-    this.source.cancel("API abort.");
+    this.source.cancel('API abort.');
   }
   public get(url: string, configs?: AxiosRequestConfig) : AxiosPromise {
     return this.request({
-      method: "get",
+      method: 'get',
       url,
       ...configs
     });
   }
   public post(url: string, data?: any, configs?: AxiosRequestConfig): AxiosPromise {
     return this.request({
-      method: "post",
+      method: 'post',
       url,
       data,
       ...configs
@@ -108,7 +106,7 @@ export class Http {
   }
   public put(url: string, data?: any, configs?: AxiosRequestConfig): AxiosPromise {
     return this.request({
-      method: "put",
+      method: 'put',
       url,
       data,
       ...configs
@@ -116,7 +114,7 @@ export class Http {
   }
   public patch(url: string, data?: any, configs?: AxiosRequestConfig): AxiosPromise {
     return this.request({
-      method: "patch",
+      method: 'patch',
       url,
       data,
       ...configs
@@ -124,7 +122,7 @@ export class Http {
   }
   public delete(url: string, configs?: AxiosRequestConfig): AxiosPromise {
     return this.request({
-      method: "delete",
+      method: 'delete',
       url,
       ...configs
     });
