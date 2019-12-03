@@ -259,7 +259,7 @@ httpIns
 
 ## 例子
 ```js
-import Http from "mlz-axios";
+import Http from "@mlz/axios";
 
 const token = localStorage.getItem('authorization')
 const AUTHORIZATION_TYPE = 3
