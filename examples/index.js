@@ -1,22 +1,21 @@
 import Http from "../src/index";
-const token =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NTAsInVzZXJfdHlwZSI6ImFkbWluIiwianRpIjoiNjVlMTY1NzEtOTliNy00YzBiLTg0ODktYjhiYzNkNTE2ZGY3IiwiaWF0IjoxNTcxMDQyNzM2fQ.cHA8rBDMZFj7P1a6UWKjINtsYOOt77ROAhK0kKZBx6Y";
+const token = "xxxxx";
 const type = 3;
-const httpIns = new Http("https://backend-dev.codemao.cn");
-const httpIns2 = new Http("https://dev-api-crm-codemaster.codemao.cn");
-const httpIns3 = new Http("https://dev-api-teaching-codemaster.codemao.cn");
+const httpIns = new Http("https://xxx-xxx.xxx.xx");
+const httpIns2 = new Http("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
+const httpIns3 = new Http("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
 
 // Http.setAuthorizationTypeOrToken("authorization_type", type, "Authorization", token);
 Http.setReqInterceptor(
   config => {
-    config.headers.Authorization = "codemao_token";
+    config.headers.Authorization = "xxxx_token";
     config.headers.authorization_type = 4;
     return config;
   },
   err => {
     return Promise.reject(err);
   },
-  "https://dev-api-teaching-codemaster.codemao.cn"
+  "https://xxx-xxx-xxxx-xxxxx.xxxx.xx"
 );
 
 Http.setReqInterceptor(
@@ -34,12 +33,12 @@ console.log(Http.INSTANCES_REQUEST_INTERCEPTORS);
 
 Http.setResInterceptor(
   res => {
-    console.log("https://dev-api-teaching-codemaster.codemao.cn");
+    console.log("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
   },
   err => {
     return Promise.reject(err);
   },
-  "https://dev-api-teaching-codemaster.codemao.cn"
+  "https://xxx-xxx-xxxx-xxxxx.xxxx.xx"
 );
 
 Http.setResInterceptor(
@@ -54,7 +53,7 @@ Http.setResInterceptor(
 console.log(Http.INSTANCES_RESPONSE_INTERCEPTORS);
 
 httpIns
-  .post("/tiger/lesson/ticket/give-out", {
+  .post("/xxx/xxx/xxx/xxx", {
     amount: "1",
     student_id: "1000824602",
     ticket_type: "101"
@@ -67,12 +66,12 @@ httpIns
 // httpIns2.setInstancesAuthorizationTypeOrToken("type", 4, "token", "Bearer");
 
 httpIns2
-  .get("/admin/crm/head-teachers/statistics/card", { params: { card_type: 4 } })
+  .get("/xxxx/xxxx/xxx/xxx/xxx", { params: { card_type: 4 } })
   .then(res => {});
 
 // httpIns3.setInstancesAuthorizationTypeOrToken("type", 1, "token", "xxx");
 httpIns3
-  .get("/teachers/tracsk")
+  .get("/xxx/xxx")
   .then(res => {
     console.log('res: ', res);
     if (/^2/.test(res.status)) {
