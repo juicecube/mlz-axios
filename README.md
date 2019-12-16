@@ -137,15 +137,24 @@ Http.setResInterceptor(
 ## 实例方法
 设置实例的 authorizationTokenToken 和 authorizationType
 ```js
-setInstanceTokenConfig(typeKey:string, typeValue:number, tokenKey:string, tokenValue:string)
+setInstanceTokenConfig({
+  authorizationTypeKey?: string;
+  authorizationTokenKey?: string;
+  authorizationTypeValue?: number;
+  authorizationTokenValue?: string;
+})
 ```
 示例：
 ```js
 import Http from "mlz-axios";
 const httpIns = new Http('https://xxx.xxx.com')
-const token = "xxx";
-const type = 3;
-httpIns.setInstanceTokenConfig("authorization_type", type, "Authorization", token);
+httpIns.setInstanceTokenConfig({
+  authorizationTypeKey: 'authorization_type',
+  authorizationTokenKey: 'Authorization',
+  authorizationTypeValue: 1
+  authorizationTokenValue: 'token'
+});
+
 ```
 
 ### get(url[, config])
