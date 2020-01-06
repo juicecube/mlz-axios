@@ -1,9 +1,6 @@
 import Http from "../src/index";
 const token = "xxxxx";
 const type = 3;
-const httpIns = new Http("https://xxx-xxx.xxx.xx");
-const httpIns2 = new Http("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
-const httpIns3 = new Http("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
 
 // Http.setAuthorizationTypeOrToken("authorization_type", type, "Authorization", token);
 Http.setReqInterceptor(
@@ -29,28 +26,33 @@ Http.setReqInterceptor(
   }
 );
 
-console.log(Http.INSTANCES_REQUEST_INTERCEPTORS);
+console.log('INSTANCES_REQUEST_INTERCEPTORS', Http.INSTANCES_REQUEST_INTERCEPTORS);
+console.log('GLOBAL_REQUEST_INTERCEPTORS', Http.GLOBAL_REQUEST_INTERCEPTORS);
 
-Http.setResInterceptor(
-  res => {
-    console.log("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
-  },
-  err => {
-    return Promise.reject(err);
-  },
-  "https://xxx-xxx-xxxx-xxxxx.xxxx.xx"
-);
+// Http.setResInterceptor(
+//   res => {
+//     console.log("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
+//   },
+//   err => {
+//     return Promise.reject(err);
+//   },
+//   "https://xxx-xxx-xxxx-xxxxx.xxxx.xx"
+// );
 
-Http.setResInterceptor(
-  res => {
-    console.log("common");
-  },
-  err => {
-    return Promise.reject(err);
-  }
-);
+// Http.setResInterceptor(
+//   res => {
+//     console.log("common");
+//   },
+//   err => {
+//     return Promise.reject(err);
+//   }
+// );
 
 console.log(Http.INSTANCES_RESPONSE_INTERCEPTORS);
+
+const httpIns = new Http("https://xxx-xxx.xxx.xx");
+const httpIns2 = new Http("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
+const httpIns3 = new Http("https://xxx-xxx-xxxx-xxxxx.xxxx.xx");
 
 httpIns
   .post("/xxx/xxx/xxx/xxx", {

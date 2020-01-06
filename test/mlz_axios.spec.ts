@@ -3,7 +3,7 @@ import Http from '../src/index'
 describe('class Http', () => {
   test('default config', () => {
     const httpIns = new Http('https://www.example.com')
-    expect(httpIns.axiosIns.defaults.timeout).toBe(5000)
+    expect(httpIns.axiosIns.defaults.timeout).toBe(0)
     expect(httpIns.axiosIns.defaults.withCredentials).toBeTruthy()
     expect(httpIns.axiosIns.defaults.validateStatus(199)).toBeFalsy()
     expect(httpIns.axiosIns.defaults.validateStatus(200)).toBeTruthy()
@@ -114,9 +114,7 @@ describe('class Http', () => {
     expect(Http.getInstances('https://www.baidu.com').defaults.baseURL).toBe('https://www.baidu.com')
   })
   test('setReqInterceptor', async (done) => {
-    jest.setTimeout(10000)
-    const httpIns = new Http('https://www.baidu.com')
-    const httpIns1 = new Http('https://www.qq.com')
+    jest.setTimeout(20000)
 
     Http.setReqInterceptor((config:any) => {
       config.headers.Authorization = 'test_token'
@@ -146,6 +144,8 @@ describe('class Http', () => {
       config.headers.Authorization = 'test_token'
       return config
     })
+    const httpIns = new Http('https://www.baidu.com')
+    const httpIns1 = new Http('https://www.qq.com')
     try {
       const res = await httpIns.get('/')
       const res1 = await httpIns1.get('/')
@@ -159,9 +159,6 @@ describe('class Http', () => {
   })
   test("setResInterceptor", async done => {
     jest.setTimeout(10000)
-    const httpIns = new Http("https://www.baidu.com");
-    const httpIns1 = new Http("https://www.qq.com");
-
     Http.setResInterceptor((res: any) => {
       res = {
         data: {
@@ -206,6 +203,9 @@ describe('class Http', () => {
       };
       return res;
     });
+    const httpIns = new Http("https://www.baidu.com");
+    const httpIns1 = new Http("https://www.qq.com");
+
     try {
       const res = await httpIns.get("/");
       const res1 = await httpIns1.get("/");

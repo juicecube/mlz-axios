@@ -13,8 +13,18 @@ type TokenConfig = {
   authorizationTokenValue: string;
 }
 
+interface ReqInterceptor {
+  resolve: (config: AxiosRequestConfig) => AxiosRequestConfig,
+  reject: (error: any) => void,
+}
+
+interface ResInterceptor {
+  resolve: (res: AxiosResponse) => AxiosResponse,
+  reject: (error) => any,
+}
+
 const DEFAULT_CONFIG: AxiosRequestConfig = {
-  timeout: 5000,
+  timeout: 0,
   withCredentials: true,
   validateStatus: status => status >= 200 && status < 599
 };
@@ -39,8 +49,10 @@ export class Http {
   }
 
   static INSTANCES: { [key: string]: AxiosInstance } = {};
-  static INSTANCES_REQUEST_INTERCEPTORS: { [key: string]: number } = {};
-  static INSTANCES_RESPONSE_INTERCEPTORS: { [key: string]: number } = {};
+  static INSTANCES_REQUEST_INTERCEPTORS: { [key: string]: ReqInterceptor } = {};
+  static INSTANCES_RESPONSE_INTERCEPTORS: { [key: string]: ResInterceptor } = {};
+  static GLOBAL_REQUEST_INTERCEPTORS: ReqInterceptor = null;
+  static GLOBAL_RESPONSE_INTERCEPTORS: ResInterceptor = null;
 
   constructor(baseUrl: string, config: AxiosRequestConfig = {}) {
     const axiosIns = axios.create({
@@ -50,6 +62,16 @@ export class Http {
     });
     Http.INSTANCES[baseUrl] = axiosIns;
     this.axiosIns = axiosIns;
+
+    // 设置拦截器
+    const requestInterceptor = Http.INSTANCES_REQUEST_INTERCEPTORS[baseUrl] || Http.GLOBAL_REQUEST_INTERCEPTORS;
+    const responseInterceptor = Http.INSTANCES_RESPONSE_INTERCEPTORS[baseUrl] || Http.GLOBAL_RESPONSE_INTERCEPTORS
+    if (requestInterceptor) {
+      this.axiosIns.interceptors.request.use(requestInterceptor.resolve, requestInterceptor.reject);
+    }
+    if (responseInterceptor) {
+      this.axiosIns.interceptors.response.use(responseInterceptor.resolve, responseInterceptor.reject);
+    }
   }
 
   // 设置单个实例的token与tokenType
@@ -62,6 +84,7 @@ export class Http {
   }
 
   private request(opt: AxiosRequestConfig) {
+
     const _opt = Object.assign({}, opt);
     if (this.isSetInstancesToken) {
       const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = this.instanceTokenConfig
@@ -148,23 +171,17 @@ export class Http {
     url?: string
   ) {
     if (url) {
-      const interceptorsId = Http.INSTANCES_REQUEST_INTERCEPTORS[url];
-      const instance = Http.INSTANCES[url];
-      if (interceptorsId !== undefined) {
-        instance.interceptors.request.eject(interceptorsId);
-      }
-      if (instance) {
-        const CreateInterceptorsId = instance.interceptors.request.use(resolve, reject);
-        Http.INSTANCES_REQUEST_INTERCEPTORS[url] = CreateInterceptorsId;
-      }
+      // 单个实例
+      Http.INSTANCES_REQUEST_INTERCEPTORS[url] = {
+        resolve,
+        reject
+      };
     } else {
-      for (let key in Http.INSTANCES) {
-        if (Http.INSTANCES_REQUEST_INTERCEPTORS[key] === undefined) {
-          const instance = Http.INSTANCES[key];
-          const interceptorsId = instance.interceptors.request.use(resolve, reject);
-          Http.INSTANCES_REQUEST_INTERCEPTORS[key] = interceptorsId;
-        }
-      }
+      // 全局
+      Http.GLOBAL_REQUEST_INTERCEPTORS = {
+        resolve,
+        reject
+      };
     }
   }
 
@@ -175,23 +192,17 @@ export class Http {
     url?: string
   ) {
     if (url) {
-      const interceptorsId = Http.INSTANCES_RESPONSE_INTERCEPTORS[url];
-      const instance = Http.INSTANCES[url];
-      if (interceptorsId !== undefined) {
-        instance.interceptors.response.eject(interceptorsId);
-      }
-      if (instance) {
-        const CreateInterceptorsId = instance.interceptors.response.use(resolve, reject);
-        Http.INSTANCES_RESPONSE_INTERCEPTORS[url] = CreateInterceptorsId;
-      }
+      // 实例
+      Http.INSTANCES_RESPONSE_INTERCEPTORS[url] = {
+        resolve,
+        reject
+      };
     } else {
-      for (let key in Http.INSTANCES) {
-        if (Http.INSTANCES_RESPONSE_INTERCEPTORS[key] === undefined) {
-          const instance = Http.INSTANCES[key];
-          const CreateInterceptorsId = instance.interceptors.response.use(resolve, reject);
-          Http.INSTANCES_RESPONSE_INTERCEPTORS[key] = CreateInterceptorsId;
-        }
-      }
+      // 全局
+      Http.GLOBAL_RESPONSE_INTERCEPTORS = {
+        resolve,
+        reject
+      };
     }
   }
 }
