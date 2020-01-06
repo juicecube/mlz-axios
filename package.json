@@ -1,6 +1,6 @@
 {
   "name": "@mlz/axios",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "mlz-axios",
   "main": "dist/ts-axios.umd.js",
   "module": "dist/ts-axios.es5.js",
