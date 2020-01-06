@@ -114,7 +114,7 @@ describe('class Http', () => {
     expect(Http.getInstances('https://www.baidu.com').defaults.baseURL).toBe('https://www.baidu.com')
   })
   test('setReqInterceptor', async (done) => {
-    jest.setTimeout(10000)
+    jest.setTimeout(20000)
 
     Http.setReqInterceptor((config:any) => {
       config.headers.Authorization = 'test_token'
