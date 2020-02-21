@@ -1,56 +1,56 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
-const webpack = require('webpack')
-const webpackDevMiddleware = require('webpack-dev-middleware')
-const webpackHotMiddleware = require('webpack-hot-middleware')
-const WebpackConfig = require('./webpack.config')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const WebpackConfig = require('./webpack.config');
 
-const app = express()
-const compiler = webpack(WebpackConfig)
+const app = express();
+const compiler = webpack(WebpackConfig);
 
 app.use(webpackDevMiddleware(compiler, {
   publicPath: '/__build__/',
   stats: {
     colors: true,
-    chunks: false
-  }
-}))
+    chunks: false,
+  },
+}));
 
-app.use(webpackHotMiddleware(compiler))
+app.use(webpackHotMiddleware(compiler));
 
 app.use(express.static(__dirname, {
-  setHeaders (res) {
-    res.cookie('XSRF-TOKEN-D', '1234abc')
-  }
-}))
+  setHeaders(res) {
+    res.cookie('XSRF-TOKEN-D', '1234abc');
+  },
+}));
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cookieParser())
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
-const router = express.Router()
+const router = express.Router();
 
 router.get('/error/timeout', function(req, res) {
   setTimeout(() => {
     res.json({
-      msg: `hello world`
-    })
-  }, 6000)
-})
+      msg: 'hello world',
+    });
+  }, 6000);
+});
 
 router.post('/base/post', function(req, res) {
-  res.json(req.body)
-})
+  res.json(req.body);
+});
 
 
-app.use(router)
+app.use(router);
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8080;
 module.exports = app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}, Ctrl+C to stop`)
-})
+  console.log(`Server listening on http://localhost:${port}, Ctrl+C to stop`);
+});
 
 
 

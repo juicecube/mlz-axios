@@ -1,11 +1,11 @@
-const path = require('path')
-const webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'development',
 
   entry: {
-    index: ['webpack-hot-middleware/client', path.join(__dirname, './index.js')]
+    index: ['webpack-hot-middleware/client', path.join(__dirname, './index.js')],
   },
 
   /**
@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '__build__'),
     filename: '[name].js',
-    publicPath: '/__build__/'
+    publicPath: '/__build__/',
   },
 
   module: {
@@ -34,26 +34,26 @@ module.exports = {
           {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true
-            }
-          }
-        ]
+              transpileOnly: true,
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
         use: [
-          'style-loader', 'css-loader'
-        ]
-      }
-    ]
+          'style-loader', 'css-loader',
+        ],
+      },
+    ],
   },
 
   resolve: {
-    extensions: ['.ts', '.tsx', '.js']
+    extensions: ['.ts', '.tsx', '.js'],
   },
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
-  ]
-}
+    new webpack.NoEmitOnErrorsPlugin(),
+  ],
+};

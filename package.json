@@ -15,10 +15,16 @@
     "coverage": "jest --coverage",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts",
-    "lint": "tslint --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+    "lint": "eslint src/**/*.ts test/**/*.ts",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "prepub": "npm run test:prod && npm run build",
     "pub": "sh release.sh"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "commit-msg": "commitlint -e $GIT_PARAMS"
+    }
   },
   "repository": {
     "type": "git",
@@ -64,11 +70,16 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@mlz/lint": "^1.1.10",
     "@types/jasmine-ajax": "^3.1.40",
     "@types/jest": "^24.0.18",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
+    "eslint": "^6.8.0",
     "express": "^4.17.1",
+    "husky": "^4.2.3",
     "jasmine-ajax": "^4.0.0",
     "jasmine-core": "^3.4.0",
     "jest": "^24.9.0",
@@ -82,9 +93,6 @@
     "rollup-plugin-typescript2": "^0.23.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
-    "tslint": "^5.19.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-config-standard": "^8.0.1",
     "typescript": "^3.5.3",
     "webpack": "^4.39.3",
     "webpack-dev-middleware": "^3.7.0",

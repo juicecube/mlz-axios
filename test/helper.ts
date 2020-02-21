@@ -1,7 +1,5 @@
-export function getAjaxRequest(): Promise<JasmineAjaxRequest> {
+export function getAjaxRequest():Promise<JasmineAjaxRequest> {
   return new Promise(function(resolve) {
-    setTimeout(() => {
-      return resolve(jasmine.Ajax.requests.mostRecent())
-    }, 5000)
-  })
+    setTimeout(() => resolve(jasmine.Ajax.requests.mostRecent()), 5000);
+  });
 }

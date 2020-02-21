@@ -3,69 +3,69 @@ import axios, {
   CancelTokenSource,
   AxiosPromise,
   AxiosResponse,
-  AxiosInstance
+  AxiosInstance,
 } from 'axios';
 
 type TokenConfig = {
-  authorizationTypeKey: string;
-  authorizationTokenKey: string;
-  authorizationTypeValue: number;
-  authorizationTokenValue: string;
+  authorizationTypeKey:string;
+  authorizationTokenKey:string;
+  authorizationTypeValue:number;
+  authorizationTokenValue:string;
 }
 
 interface ReqInterceptor {
-  resolve: (config: AxiosRequestConfig) => AxiosRequestConfig,
-  reject: (error: any) => void,
+  resolve:(config:AxiosRequestConfig) => AxiosRequestConfig;
+  reject:(error:any) => void;
 }
 
 interface ResInterceptor {
-  resolve: (res: AxiosResponse) => AxiosResponse,
-  reject: (error) => any,
+  resolve:(res:AxiosResponse) => AxiosResponse;
+  reject:(error) => any;
 }
 
-const DEFAULT_CONFIG: AxiosRequestConfig = {
+const DEFAULT_CONFIG:AxiosRequestConfig = {
   timeout: 0,
   withCredentials: true,
-  validateStatus: status => status >= 200 && status < 599
+  validateStatus: (status) => status >= 200 && status < 599,
 };
 
 export class Http {
-  private isSetInstancesToken: boolean = false;
+  private isSetInstancesToken:boolean = false;
 
-  public axiosIns: AxiosInstance;
-  public source: CancelTokenSource = axios.CancelToken.source();
+  public axiosIns:AxiosInstance;
+  public source:CancelTokenSource = axios.CancelToken.source();
   public instanceTokenConfig:TokenConfig = {
     authorizationTypeKey: 'Authorization',
     authorizationTokenKey: 'authorization_type',
     authorizationTypeValue: 0,
-    authorizationTokenValue: ''
+    authorizationTokenValue: '',
   }
 
   static globalTokenConfig:TokenConfig = {
     authorizationTypeKey: 'Authorization',
     authorizationTokenKey: 'authorization_type',
     authorizationTypeValue: 0,
-    authorizationTokenValue: ''
+    authorizationTokenValue: '',
   }
 
-  static INSTANCES: { [key: string]: AxiosInstance } = {};
-  static INSTANCES_REQUEST_INTERCEPTORS: { [key: string]: ReqInterceptor } = {};
-  static INSTANCES_RESPONSE_INTERCEPTORS: { [key: string]: ResInterceptor } = {};
-  static GLOBAL_REQUEST_INTERCEPTORS: ReqInterceptor = null;
-  static GLOBAL_RESPONSE_INTERCEPTORS: ResInterceptor = null;
+  static INSTANCES:{ [key:string]:AxiosInstance } = {};
+  static INSTANCES_REQUEST_INTERCEPTORS:{ [key:string]:ReqInterceptor } = {};
+  static INSTANCES_RESPONSE_INTERCEPTORS:{ [key:string]:ResInterceptor } = {};
+  static GLOBAL_REQUEST_INTERCEPTORS:ReqInterceptor = null;
+  static GLOBAL_RESPONSE_INTERCEPTORS:ResInterceptor = null;
 
-  constructor(baseUrl: string, config: AxiosRequestConfig = {}) {
+  constructor(baseUrl:string, config:AxiosRequestConfig = {}) {
     const axiosIns = axios.create({
       baseURL: baseUrl,
       ...DEFAULT_CONFIG,
-      ...config
+      ...config,
     });
     Http.INSTANCES[baseUrl] = axiosIns;
     this.axiosIns = axiosIns;
 
     // 设置拦截器
     const requestInterceptor = Http.INSTANCES_REQUEST_INTERCEPTORS[baseUrl] || Http.GLOBAL_REQUEST_INTERCEPTORS;
-    const responseInterceptor = Http.INSTANCES_RESPONSE_INTERCEPTORS[baseUrl] || Http.GLOBAL_RESPONSE_INTERCEPTORS
+    const responseInterceptor = Http.INSTANCES_RESPONSE_INTERCEPTORS[baseUrl] || Http.GLOBAL_RESPONSE_INTERCEPTORS;
     if (requestInterceptor) {
       this.axiosIns.interceptors.request.use(requestInterceptor.resolve, requestInterceptor.reject);
     }
@@ -79,15 +79,15 @@ export class Http {
     this.isSetInstancesToken = true;
     this.instanceTokenConfig = {
       ...this.instanceTokenConfig,
-      ...instanceTokenConfig
-    }
+      ...instanceTokenConfig,
+    };
   }
 
-  private request(opt: AxiosRequestConfig) {
+  private request(opt:AxiosRequestConfig) {
 
     const _opt = Object.assign({}, opt);
     if (this.isSetInstancesToken) {
-      const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = this.instanceTokenConfig
+      const { authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey } = this.instanceTokenConfig;
       if (authorizationTypeKey && authorizationTypeValue && authorizationTokenKey && authorizationTokenValue){
         _opt.headers = {
           [authorizationTypeKey]: authorizationTypeValue,
@@ -96,7 +96,7 @@ export class Http {
         };
       }
     } else {
-      const {authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey} = Http.globalTokenConfig
+      const { authorizationTypeValue, authorizationTokenValue, authorizationTypeKey, authorizationTokenKey } = Http.globalTokenConfig;
       if (authorizationTypeKey && authorizationTypeValue && authorizationTokenKey && authorizationTokenValue) {
         _opt.headers = {
           [authorizationTypeKey]: authorizationTypeValue,
@@ -112,42 +112,42 @@ export class Http {
   public abort() {
     this.source.cancel('API abort.');
   }
-  public get(url: string, configs?: AxiosRequestConfig) : AxiosPromise {
+  public get(url:string, configs?:AxiosRequestConfig):AxiosPromise {
     return this.request({
       method: 'get',
       url,
-      ...configs
+      ...configs,
     });
   }
-  public post(url: string, data?: any, configs?: AxiosRequestConfig): AxiosPromise {
+  public post(url:string, data?:any, configs?:AxiosRequestConfig):AxiosPromise {
     return this.request({
       method: 'post',
       url,
       data,
-      ...configs
+      ...configs,
     });
   }
-  public put(url: string, data?: any, configs?: AxiosRequestConfig): AxiosPromise {
+  public put(url:string, data?:any, configs?:AxiosRequestConfig):AxiosPromise {
     return this.request({
       method: 'put',
       url,
       data,
-      ...configs
+      ...configs,
     });
   }
-  public patch(url: string, data?: any, configs?: AxiosRequestConfig): AxiosPromise {
+  public patch(url:string, data?:any, configs?:AxiosRequestConfig):AxiosPromise {
     return this.request({
       method: 'patch',
       url,
       data,
-      ...configs
+      ...configs,
     });
   }
-  public delete(url: string, configs?: AxiosRequestConfig): AxiosPromise {
+  public delete(url:string, configs?:AxiosRequestConfig):AxiosPromise {
     return this.request({
       method: 'delete',
       url,
-      ...configs
+      ...configs,
     });
   }
 
@@ -155,53 +155,53 @@ export class Http {
   static setGlobalTokenConfig(globalTokenConfig:Partial<TokenConfig>) {
     Http.globalTokenConfig = {
       ...Http.globalTokenConfig,
-      ...globalTokenConfig
-    }
+      ...globalTokenConfig,
+    };
   }
 
   // 获取相对应的实例
-  static getInstances(key: string): AxiosInstance {
+  static getInstances(key:string):AxiosInstance {
     return Http.INSTANCES[key];
   }
 
   // 设置请求拦截器
   static setReqInterceptor(
-    resolve?: (config: AxiosRequestConfig) => AxiosRequestConfig,
-    reject?: (error: any) => void,
-    url?: string
+    resolve?:(config:AxiosRequestConfig) => AxiosRequestConfig,
+    reject?:(error:any) => void,
+    url?:string,
   ) {
     if (url) {
       // 单个实例
       Http.INSTANCES_REQUEST_INTERCEPTORS[url] = {
         resolve,
-        reject
+        reject,
       };
     } else {
       // 全局
       Http.GLOBAL_REQUEST_INTERCEPTORS = {
         resolve,
-        reject
+        reject,
       };
     }
   }
 
   // 设置响应拦截器
   static setResInterceptor(
-    resolve?: (res: AxiosResponse) => AxiosResponse,
-    reject?: (error) => any,
-    url?: string
+    resolve?:(res:AxiosResponse) => AxiosResponse,
+    reject?:(error) => any,
+    url?:string,
   ) {
     if (url) {
       // 实例
       Http.INSTANCES_RESPONSE_INTERCEPTORS[url] = {
         resolve,
-        reject
+        reject,
       };
     } else {
       // 全局
       Http.GLOBAL_RESPONSE_INTERCEPTORS = {
         resolve,
-        reject
+        reject,
       };
     }
   }
