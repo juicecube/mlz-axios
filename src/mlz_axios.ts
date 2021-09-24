@@ -48,6 +48,8 @@ export class Http {
     authorizationTokenValue: '',
   }
 
+  static globalHeaders = {};
+
   static INSTANCES:{ [key:string]:AxiosInstance } = {};
   static INSTANCES_REQUEST_INTERCEPTORS:{ [key:string]:ReqInterceptor } = {};
   static INSTANCES_RESPONSE_INTERCEPTORS:{ [key:string]:ResInterceptor } = {};
@@ -104,6 +106,10 @@ export class Http {
           ..._opt.headers,
         };
       }
+      if (Http.globalHeaders) {
+        console.log(_opt.headers);
+        _opt.headers = { ..._opt.headers, ...Http.globalHeaders };
+      }
     }
     _opt.cancelToken = this.source.token;
     return this.axiosIns.request(_opt);
@@ -149,6 +155,10 @@ export class Http {
       url,
       ...configs,
     });
+  }
+
+  static setGlobalHeaders(data:{[key:string]:any}) {
+    Http.globalHeaders = data;
   }
 
   // 全局设置token与tokenType
