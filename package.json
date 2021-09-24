@@ -18,6 +18,7 @@
     "lint": "eslint src/**/*.ts test/**/*.ts",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "prepub": "npm run test:prod && npm run build",
+    "release": "standard-version",
     "pub": "sh release.sh"
   },
   "husky": {
@@ -91,6 +92,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.23.0",
+    "standard-version": "^9.3.1",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
     "typescript": "^3.5.3",
